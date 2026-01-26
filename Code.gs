@@ -61,11 +61,17 @@ function adminLogin(u, p) {
 }
 
 function submitApplication(fd) {
-  var isOpen = getRecruitStatus();
-  if (!isOpen) {
-    throw new Error("ระบบปิดรับสมัครแล้ว ไม่สามารถส่งข้อมูลได้");
-  }
+  var status = getRecruitStatus();
+  var type = fd.applyType; // รับค่าประเภทการสมัครจากฟอร์ม (special/general)
 
+  // ตรวจสอบห้องเรียนพิเศษ
+  if (type === 'special' && !status.special) {
+    throw new Error("ขออภัย ระบบรับสมัคร 'ห้องเรียนพิเศษ' ปิดทำการแล้ว");
+  } 
+  // ตรวจสอบห้องเรียนทั่วไป
+  else if (type === 'general' && !status.general) {
+    throw new Error("ขออภัย ระบบรับสมัคร 'ห้องเรียนทั่วไป' ปิดทำการแล้ว");
+  }
   
   
  const lock = LockService.getScriptLock();
@@ -309,15 +315,20 @@ function getPublicReport() {
 // --- ส่วนจัดการเปิด-ปิดระบบรับสมัคร ---
 
 // ฟังก์ชันสำหรับแอดมินกดเปิด/ปิด
-function setRecruitStatus(isOpen) {
-  // บันทึกค่าลงใน Script Properties (เก็บค่าถาวรจนกว่าจะเปลี่ยน)
-  PropertiesService.getScriptProperties().setProperty('IS_OPEN', isOpen ? 'true' : 'false');
-  return { success: true, isOpen: isOpen };
+function setRecruitStatus(type, isOpen) {
+  var props = PropertiesService.getScriptProperties();
+  // ตั้งชื่อตัวแปรแยกกัน: STATUS_SPECIAL และ STATUS_GENERAL
+  var key = (type === 'special') ? 'STATUS_SPECIAL' : 'STATUS_GENERAL';
+  props.setProperty(key, isOpen ? 'true' : 'false');
+  return { success: true };
 }
 
 // ฟังก์ชันดึงสถานะปัจจุบัน
 function getRecruitStatus() {
-  var status = PropertiesService.getScriptProperties().getProperty('IS_OPEN');
-  // ถ้ายังไม่เคยตั้งค่า ให้ถือว่าเปิด (true) เป็นค่าเริ่มต้น
-  return status === null ? true : (status === 'true'); 
+  var props = PropertiesService.getScriptProperties();
+  return {
+    // ถ้าไม่เคยตั้งค่า (null) ให้ถือว่าเปิด (true) เป็นค่าเริ่มต้น
+    special: props.getProperty('STATUS_SPECIAL') !== 'false', 
+    general: props.getProperty('STATUS_GENERAL') !== 'false'
+  };
 }
