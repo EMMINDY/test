@@ -932,15 +932,84 @@ function filterTable(type) {
        mkDig('phone-container','phone',10);
        mkDig('checkIdCard-container','checkIdCard',13);
     };
-    function mkDig(cid, hid, n) {
-       const c=el(cid); c.innerHTML='';
-       for(let i=0;i<n;i++){
-         let ip=document.createElement('input'); ip.className='digit-box'; ip.maxLength=1; ip.inputMode='numeric';
-         ip.oninput=(e)=>{ if(!/^\d*$/.test(e.target.value))e.target.value=''; if(e.target.value && i<n-1)c.children[i+1].focus(); upDig(cid,hid); };
-         ip.onkeydown=(e)=>{ if(e.key==='Backspace' && !e.target.value && i>0)c.children[i-1].focus(); };
-         c.appendChild(ip);
-       }
-    }
+    // ฟังก์ชันสร้างช่องกรอก (ฉบับปรับปรุง รองรับ G และถอยหลังได้)
+    // ฟังก์ชันสร้างช่องกรอก 13 หลัก (ใช้ได้ทั้งหน้าสมัคร และ หน้าตรวจสอบสถานะ)
+// ฟังก์ชันสร้างช่องกรอก (ฉบับอัปเกรด: G ได้แค่ช่องแรก + ช่องหลังเป็นแป้นตัวเลข)
+function mkDig(cid, hid, n) {
+   const c = document.getElementById(cid);
+   if (!c) return;
+   c.innerHTML = '';
+   
+   // เช็คว่าเป็นช่องบัตรประชาชนหรือไม่
+   const isID = cid.toLowerCase().includes('idcard');
+
+   for (let i = 0; i < n; i++) {
+     let ip = document.createElement('input');
+     ip.className = 'digit-box';
+     ip.maxLength = 1;
+     
+     // [จุดที่แก้ 1] ตั้งค่าแป้นพิมพ์
+     // - ถ้าเป็นช่องแรกของบัตร (i==0) -> ให้ใช้แป้น text (เพื่อพิมพ์ G)
+     // - ช่องอื่นๆ หรือเบอร์โทร -> ให้ใช้แป้น numeric (ตัวเลขล้วน พิมพ์ง่าย)
+     if (isID && i === 0) {
+        ip.setAttribute('inputmode', 'text');
+     } else {
+        ip.setAttribute('inputmode', 'numeric');
+     }
+     
+     ip.oninput = (e) => {
+        let val = e.target.value;
+        
+        if (isID) {
+            // [จุดที่แก้ 2] ล็อคการพิมพ์ G
+            if (i === 0) {
+                // ช่องแรก: อนุญาตเลข 0-9 และ G, g
+                val = val.replace(/[^0-9Gg]/g, '').toUpperCase();
+            } else {
+                // ช่อง 2-13: อนุญาตเฉพาะตัวเลขเท่านั้น (ห้ามพิมพ์ G)
+                val = val.replace(/[^0-9]/g, '');
+            }
+        } else {
+            // กรณีเบอร์โทร: ตัวเลขเท่านั้นทุกช่อง
+            val = val.replace(/[^0-9]/g, '');
+        }
+        
+        e.target.value = val;
+        
+        // พิมพ์เสร็จแล้วเด้งไปช่องถัดไป
+        if (val && i < n - 1) c.children[i + 1].focus();
+        
+        upDig(cid, hid);
+     };
+     
+     // กด Backspace เพื่อถอยกลับ
+     ip.onkeydown = (e) => {
+        if (e.key === 'Backspace' && !e.target.value && i > 0) c.children[i - 1].focus();
+     };
+     
+     c.appendChild(ip);
+   }
+}
+// ฟังก์ชันตรวจสอบความถูกต้อง (รองรับทั้ง G และเลข 13 หลัก)
+function validateThaiID(id) {
+  if (!id || id.length !== 13) return false;
+  id = id.toUpperCase();
+
+  // กรณีรหัส G (G + 12 ตัวเลข) -> ให้ผ่านเลย ไม่ต้องคำนวณสูตร
+  if (id.charAt(0) === 'G') {
+      return /^\d{12}$/.test(id.substring(1));
+  }
+
+  // กรณีบัตรคนไทย (13 ตัวเลข) -> คำนวณสูตร
+  if (!/^\d{13}$/.test(id)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseFloat(id.charAt(i)) * (13 - i);
+  }
+  const checkDigit = (11 - sum % 11) % 10;
+  return checkDigit === parseFloat(id.charAt(12));
+}
     function upDig(cid,hid){ let v=''; document.querySelectorAll(`#${cid} input`).forEach(x=>v+=x.value); el(hid).value=v; }
     function setDig(cid,v){ document.querySelectorAll(`#${cid} input`).forEach((x,i)=>x.value=v[i]||''); upDig(cid,cid.replace('-container','')); }
 
@@ -1367,7 +1436,13 @@ function filterTable(type) {
     const idCardVal = el('idCard').value;
     const phoneVal = el('phone').value;
     const selectedPlan = el('plan').value;
-
+    var idVal = document.getElementById('idCard').value;
+    
+    if (!validateThaiID(idVal)) {
+    Swal.fire('ข้อผิดพลาด', 'เลขบัตรประชาชน หรือ รหัส G ไม่ถูกต้อง', 'error');
+    loading(0); // ปิด loading ถ้ามี
+    return; // หยุดการทำงาน
+    }
     // --- ส่วนที่ 1: ตรวจสอบความยาวพื้นฐาน ---
     if (idCardVal.length != 13 || phoneVal.length != 10) {
         return Swal.fire('ข้อมูลไม่ครบ', 'กรุณาตรวจสอบเลขบัตรประชาชน (13 หลัก) และเบอร์โทร (10 หลัก)', 'warning');
@@ -2141,37 +2216,7 @@ window.addEventListener('load', function() {
     }
   }, 800);
 });
-// --- ค้นหา function createDigitInputs ของเดิม แล้วแก้เป็น code นี้นะครับ ---
-    function createDigitInputs(containerId, length, hiddenInputId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      const hiddenInput = document.getElementById(hiddenInputId);
-      
-      for(let i=0; i<length; i++) {
-         let input = document.createElement('input');
-         input.type = 'text'; // เปลี่ยนจาก tel เป็น text เพื่อรองรับตัวอักษร
-         input.className = 'digit-box';
-         input.maxLength = 1;
-         
-         // Event เมื่อมีการพิมพ์
-         input.oninput = function() { 
-            // อนุญาตให้พิมพ์ 0-9 และ G, g เท่านั้น (แปลงเป็นตัวใหญ่ทันที)
-            this.value = this.value.replace(/[^0-9Gg]/g, '').toUpperCase();
-            
-            // เลื่อนไปช่องถัดไปอัตโนมัติ
-            if(this.value.length === 1 && i < length -1) container.children[i+1].focus();
-            updateHiddenInput(containerId, hiddenInputId);
-         };
 
-         // Event การกด Backspace
-         input.onkeydown = function(e) {
-            if(e.key === "Backspace" && this.value === "" && i > 0) {
-               container.children[i-1].focus();
-            }
-         };
-         container.appendChild(input);
-      }
-    }
 
    function checkSystemStatus() {
   google.script.run.withSuccessHandler(function(status) {
