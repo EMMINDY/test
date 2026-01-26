@@ -549,10 +549,17 @@
                 <i class="bi bi-file-earmark-excel"></i> ส่งออก Excel
             </button>
           </div>
-          <div class="form-check form-switch my-3">
-           <input class="form-check-input" type="checkbox" id="toggleRecruit" onchange="toggleSystem(this)">
-           <label class="form-check-label fw-bold" for="toggleRecruit">เปิดระบบรับสมัคร</label>
-          </div>
+           <div class="d-flex flex-column gap-2 my-3 p-3 bg-light rounded border">
+          <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="toggleSpecial"    onchange="toggleSystem('special', this)" style="cursor: pointer;">
+           <label class="form-check-label fw-bold text-primary" for="toggleSpecial">เปิดรับสมัคร ห้องเรียนพิเศษ</label>
+            </div>
+  
+          <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="toggleGeneral" onchange="toggleSystem('general', this)" style="cursor: pointer;">
+         <label class="form-check-label fw-bold text-success" for="toggleGeneral">เปิดรับสมัคร ห้องเรียนทั่วไป</label>
+      </div>
+      </div>
 
         <button class="btn btn-outline-danger btn-sm" onclick="logout()">
     <i class="bi bi-box-arrow-right"></i> ออกจากระบบ
@@ -564,9 +571,13 @@
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <h6 class="text-muted mb-3">จำนวนผู้สมัครแยกตามแผนการเรียน</h6>
-                    <canvas id="chartPlan" style="max-height:250px;"></canvas>
-                </div>
+                <h6 class="text-muted mb-3">จำนวนผู้สมัครแยกตามแผนการเรียน</h6>
+    
+                 <div class="chart-container" style="position: relative; height: 350px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
+                  <canvas id="chartPlan"></canvas>
+                 </div>
+    
+              </div>
             </div>
         </div>
         <div class="col-md-6">
@@ -1564,16 +1575,14 @@ function filterTable(type) {
 function updateCharts() {
     if (!allSt || allSt.length === 0) return;
 
-    // 1. นับจำนวนแผนการเรียน
+    // 1. เตรียมตัวแปรนับข้อมูล
     let planCounts = {};
-    // 2. นับจำนวนสถานะ
     let statusCounts = { 'อนุมัติ': 0, 'รอตรวจสอบ': 0, 'ไม่ผ่าน': 0 };
 
     allSt.forEach(s => {
-        // นับแผน
+        // นับแผนการเรียน
         let p = s.plan || 'ไม่ระบุ';
-        if (!planCounts[p]) planCounts[p] = 0;
-        planCounts[p]++;
+        planCounts[p] = (planCounts[p] || 0) + 1;
 
         // นับสถานะ
         let st = s.status || 'รอตรวจสอบ';
@@ -1582,11 +1591,87 @@ function updateCharts() {
         else statusCounts['รอตรวจสอบ']++;
     });
 
-    // เรียกวาดกราฟ (ถ้ามีไลบรารี Chart.js)
+    // 2. [เพิ่มใหม่] เรียงลำดับแผนการเรียน (จากมากไปน้อย) เพื่อความสวยงาม
+    let sortedPlanArr = Object.entries(planCounts).sort((a, b) => b[1] - a[1]);
+    let sortedPlanObj = {};
+    sortedPlanArr.forEach(([key, val]) => sortedPlanObj[key] = val);
+
+    // 3. เรียกวาดกราฟ
     if (typeof Chart !== 'undefined') {
-        drawChart('chartPlan', 'จำนวนผู้สมัครแยกตามแผน', planCounts, 'bar');
+        // กราฟแผนการเรียน (ใช้ฟังก์ชันใหม่ที่สร้างเฉพาะแนวนอน)
+        drawChartHorizontal('chartPlan', 'จำนวนผู้สมัคร (คน)', sortedPlanObj);
+        
+        // กราฟสถานะ (ใช้ฟังก์ชันเดิมได้เลย)
         drawChart('chartStatus', 'สถานะการสมัคร', statusCounts, 'doughnut');
     }
+}
+// ฟังก์ชันสร้างกราฟแนวนอนแบบปรับความสูงได้
+// ฟังก์ชันสร้างกราฟแนวนอน แบบมี Scroll Bar (แก้ไขอาการค้าง)
+function drawChartHorizontal(canvasId, label, dataObj) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    // 1. ล้างค่ากราฟเดิม (สำคัญ)
+    if (myCharts[canvasId]) {
+        myCharts[canvasId].destroy();
+        delete myCharts[canvasId];
+    }
+
+    const labels = Object.keys(dataObj);
+    const data = Object.values(dataObj);
+    
+    // 2. คำนวณความสูงของกราฟด้านใน (ตามจำนวนแผนการเรียน)
+    // กำหนดให้แต่ละแท่งสูงประมาณ 35px + ระยะขอบ
+    // ถ้าข้อมูลน้อย ให้ใช้ความสูงขั้นต่ำ 300px เพื่อความสวยงาม
+    const rowHeight = 35; 
+    const minHeight = 300;
+    const contentHeight = Math.max(minHeight, labels.length * rowHeight);
+
+    // ปรับความสูงของตัว Canvas โดยตรง (ส่วน div ที่ครอบไว้จะทำหน้าที่ Scroll เอง)
+    canvas.style.height = contentHeight + 'px';
+    canvas.style.width = '100%'; // บังคับความกว้างให้เต็ม
+
+    // 3. สร้างกราฟ
+    const ctx = canvas.getContext('2d');
+    myCharts[canvasId] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)', // สีฟ้า
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                barThickness: 20, // ความหนาของแท่งกราฟคงที่
+            }]
+        },
+        options: {
+            indexAxis: 'y', // แนวนอน
+            maintainAspectRatio: false, // ปล่อยให้ยืดตามที่เรากำหนด
+            responsive: true,
+            animation: false, // ปิด Animation เพื่อความลื่นไหลและป้องกันการค้าง
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: { label: (c) => ` ${c.formattedValue} คน` }
+                }
+            },
+            scales: {
+                x: { 
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 } // แกน X เป็นจำนวนเต็ม
+                },
+                y: {
+                    ticks: { 
+                        autoSkip: false, // ห้ามซ่อนชื่อแผนการเรียน
+                        font: { size: 14 }
+                    },
+                    grid: { display: false } // ซ่อนเส้นตารางแนวนอนเพื่อความสะอาดตา
+                }
+            }
+        }
+    });
 }
 // ฟังก์ชันกดปุ่ม "ดูข้อมูล"
 function viewS(rowIndex) {
@@ -2066,68 +2151,94 @@ window.addEventListener('load', function() {
       }
     }
 
-    function checkSystemStatus() {
-  google.script.run.withSuccessHandler(function(isOpen) {
-    if (!isOpen) {
-      // 1. ซ่อนหรือปิดปุ่มรับสมัคร
-      var btns = document.querySelectorAll('button[onclick^="openForm"]');
-      btns.forEach(function(btn) {
-        btn.disabled = true;
-        btn.classList.add('btn-secondary');
-        btn.classList.remove('btn-primary', 'btn-success');
-        btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>ปิดรับสมัคร';
-      });
-
-      // 2. แสดงแจ้งเตือนหน้าเว็บ
-      Swal.fire({
-        icon: 'info',
-        title: 'ปิดรับสมัคร',
-        text: 'ระบบปิดรับสมัครแล้วในขณะนี้',
-        confirmButtonText: 'รับทราบ'
-      });
+   function checkSystemStatus() {
+  google.script.run.withSuccessHandler(function(status) {
+    // ถ้าห้องพิเศษปิด -> ปิดปุ่มที่มีคำสั่ง openForm('special')
+    if (!status.special) {
+      disableBtn('special', 'ห้องเรียนพิเศษ ปิดรับสมัคร');
+    }
+    // ถ้าห้องทั่วไปปิด -> ปิดปุ่มที่มีคำสั่ง openForm('general')
+    if (!status.general) {
+      disableBtn('general', 'ห้องเรียนทั่วไป ปิดรับสมัคร');
     }
   }).getRecruitStatus();
+  }
+
+  function disableBtn(type, msg) {
+  // ค้นหาปุ่มที่มี onclick="openForm('type')"
+  var btn = document.querySelector(`button[onclick="openForm('${type}')"]`);
+  if (btn) {
+    btn.disabled = true;
+    btn.className = "btn btn-secondary w-100 btn-lg-custom shadow-sm"; // เปลี่ยนเป็นสีเทา
+    btn.innerHTML = `<i class="bi bi-lock-fill me-2"></i> ${msg}`;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    checkSystemStatus();
-  });
 
   // --- ฟังก์ชันสำหรับปุ่มสวิตช์ Admin ---
 
 // 1. ฟังก์ชันเมื่อกดสวิตช์
-function toggleSystem(el) {
+function toggleSystem(type, el) {
   var isOpen = el.checked;
-  var statusText = isOpen ? "เปิดรับสมัคร" : "ปิดรับสมัคร";
+  var name = (type === 'special') ? 'ห้องเรียนพิเศษ' : 'ห้องเรียนทั่วไป';
   
-  // ล็อกปุ่มกันกดรัว
-  el.disabled = true;
+  el.disabled = true; // ล็อกกันกดรัว
 
-  google.script.run.withSuccessHandler(function(res) {
+  google.script.run.withSuccessHandler(function() {
     el.disabled = false;
-    // แจ้งเตือนสำเร็จ
-    Swal.fire({
+    // แจ้งเตือนมุมขวาล่าง
+    const Toast = Swal.mixin({
+      toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true
+    });
+    Toast.fire({
       icon: 'success',
-      title: 'บันทึกเรียบร้อย',
-      text: 'เปลี่ยนสถานะระบบเป็น: ' + statusText,
-      timer: 1500,
-      showConfirmButton: false
+      title: (isOpen ? 'เปิด' : 'ปิด') + 'ระบบ ' + name + ' แล้ว'
     });
   }).withFailureHandler(function(err){
     el.disabled = false;
     el.checked = !isOpen; // ดีดสวิตช์กลับถ้า error
-    Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
-  }).setRecruitStatus(isOpen);
+    Swal.fire('Error', err.message, 'error');
+  }).setRecruitStatus(type, isOpen);
 }
 
 // 2. ฟังก์ชันโหลดสถานะปุ่มตอนเข้าหน้า Admin
 function loadAdminStatus() {
-  google.script.run.withSuccessHandler(function(isOpen) {
-    var toggle = document.getElementById('toggleRecruit');
-    if(toggle) {
-        toggle.checked = isOpen; // ปรับปุ่มให้ตรงกับสถานะจริง
-    }
+  google.script.run.withSuccessHandler(function(status) {
+    var tSpec = document.getElementById('toggleSpecial');
+    var tGen = document.getElementById('toggleGeneral');
+    
+    if(tSpec) tSpec.checked = status.special;
+    if(tGen) tGen.checked = status.general;
   }).getRecruitStatus();
+}
+document.addEventListener('DOMContentLoaded', function() {
+    checkSystemStatus();
+    initThaiOnlyInput();
+  });
+
+  // --- ฟังก์ชันบังคับกรอกเฉพาะภาษาไทย ---
+function initThaiOnlyInput() {
+  // 1. เลือกช่อง input ทุกอันที่มีคลาส 'text-only'
+  const inputs = document.querySelectorAll('.text-only');
+
+  inputs.forEach(input => {
+    input.addEventListener('input', function() {
+      const original = this.value;
+      
+      // 2. ใช้ Regex ยอมรับเฉพาะ ภาษาไทย (\u0E00-\u0E7F) และ ช่องว่าง (\s)
+      // ตัวอักษรอื่นๆ (อังกฤษ, ตัวเลข, สัญลักษณ์) จะถูกลบทิ้ง
+      const clean = original.replace(/[^\u0E00-\u0E7F\s]/g, '');
+
+      if (original !== clean) {
+        this.value = clean;
+        
+        // (ตัวเลือกเสริม) แจ้งเตือนเล็กๆ เมื่อพิมพ์ผิด
+        // Swal.mixin({
+        //   toast: true, position: 'top-end', showConfirmButton: false, timer: 1500
+        // }).fire({ icon: 'warning', title: 'กรุณากรอกภาษาไทยเท่านั้น' });
+      }
+    });
+  });
 }
 
     
