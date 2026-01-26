@@ -61,6 +61,12 @@ function adminLogin(u, p) {
 }
 
 function submitApplication(fd) {
+  var isOpen = getRecruitStatus();
+  if (!isOpen) {
+    throw new Error("ระบบปิดรับสมัครแล้ว ไม่สามารถส่งข้อมูลได้");
+  }
+
+  
   
  const lock = LockService.getScriptLock();
   // พยายามล็อกระบบเป็นเวลา 10 วินาที หากคนใช้เยอะมากจะรอคิวตรงนี้
@@ -298,4 +304,20 @@ function getPublicReport() {
   } catch (e) {
     return { error: "เกิดข้อผิดพลาด: " + e.message };
   }
+}
+
+// --- ส่วนจัดการเปิด-ปิดระบบรับสมัคร ---
+
+// ฟังก์ชันสำหรับแอดมินกดเปิด/ปิด
+function setRecruitStatus(isOpen) {
+  // บันทึกค่าลงใน Script Properties (เก็บค่าถาวรจนกว่าจะเปลี่ยน)
+  PropertiesService.getScriptProperties().setProperty('IS_OPEN', isOpen ? 'true' : 'false');
+  return { success: true, isOpen: isOpen };
+}
+
+// ฟังก์ชันดึงสถานะปัจจุบัน
+function getRecruitStatus() {
+  var status = PropertiesService.getScriptProperties().getProperty('IS_OPEN');
+  // ถ้ายังไม่เคยตั้งค่า ให้ถือว่าเปิด (true) เป็นค่าเริ่มต้น
+  return status === null ? true : (status === 'true'); 
 }
