@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>ระบบรับสมัครนักเรียน 2569 - โรงเรียนอรัญประเทศ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -10,28 +11,27 @@
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <style>
-    /* 1. ตั้งค่าฟอนต์และพื้นหลัง (Background Gradient) */
+     /* 1. ตั้งค่าฟอนต์และพื้นหลัง */
     body { 
       font-family: 'Sarabun', sans-serif; 
-      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); /* พื้นหลังไล่สีฟ้าอ่อน */
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
       min-height: 100vh;
       color: #333;
     }
     
-    /* 2. กล่องเนื้อหาหลัก (Main Container - Glass Effect) */
+    /* 2. กล่องเนื้อหาหลัก */
     .main-container { 
       max-width: 1000px; 
       margin: 40px auto; 
-      background: rgba(255, 255, 255, 0.95); /* สีขาวโปร่งแสงนิดๆ */
+      background: rgba(255, 255, 255, 0.95);
       padding: 50px; 
       border-radius: 20px; 
-      box-shadow: 0 20px 50px rgba(0,0,0,0.1); /* เงานุ่มลึก */
-      backdrop-filter: blur(10px); /* เบลอฉากหลังถ้ามีซ้อน */
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.5);
       position: relative;
       overflow: hidden;
     }
-    /* แถบสีตกแต่งด้านบนกล่อง */
     .main-container::before {
       content: '';
       position: absolute;
@@ -59,7 +59,7 @@
     }
     .sub-title { color: #6c757d; font-weight: 500; }
 
-    /* 4. ปุ่มกด (Modern Buttons) */
+    /* 4. ปุ่มกด */
     .btn { border-radius: 50px; padding: 10px 25px; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s; }
     .btn-primary { 
       background: linear-gradient(45deg, #0d6efd, #0a58ca); 
@@ -76,7 +76,6 @@
       box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
     }
     
-    /* ปุ่มเมนูหน้าแรกขนาดใหญ่ */
     .btn-lg-custom { 
       padding: 25px; 
       font-size: 1.3rem; 
@@ -88,7 +87,7 @@
     }
     .btn-lg-custom:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
 
-    /* 5. ฟอร์มและอินพุต (Inputs) */
+    /* 5. ฟอร์มและอินพุต */
     .form-label { font-weight: 600; color: #495057; font-size: 0.95rem; }
     .form-control, .form-select { 
       border-radius: 10px; 
@@ -103,22 +102,55 @@
       box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); 
     }
 
-    /* กล่องช่องกรอกตัวเลข (Digit Box) */
-    .digit-container { display: flex; gap: 8px; justify-content: center; flex-wrap: nowrap; overflow-x: auto; padding: 5px 0; }
+  /* --- [แก้ไข] ปรับปรุงกล่องเลขบัตรประชาชนให้รองรับทุกหน้าจอ --- */
+    .digit-container { 
+      display: flex; 
+      gap: 8px; 
+      justify-content: center; /* จัดกึ่งกลาง */
+      flex-wrap: wrap;         /* สำคัญ: ยอมให้ปัดบรรทัดใหม่ได้ถ้าพื้นที่ไม่พอ */
+      padding: 10px 0; 
+    }
+
+    /* จัดชิดซ้ายเฉพาะในแบบฟอร์มกรอกข้อมูล เพื่อความสวยงาม */
     #form-section .digit-container { 
       justify-content: flex-start; 
     }
+
+    /* ปรับขนาดกล่อง input */
     .digit-box { 
-      width: 45px; height: 55px; 
-      text-align: center; font-size: 1.4rem; font-weight: bold; color: #0d6efd;
-      border: 2px solid #e9ecef; border-radius: 12px; 
+      width: 42px;    /* ลดขนาดลงเล็กน้อยจาก 45px เพื่อให้ประหยัดพื้นที่ */
+      height: 50px; 
+      text-align: center; 
+      font-size: 1.3rem; 
+      font-weight: bold; 
+      color: #0d6efd;
+      border: 2px solid #e9ecef; 
+      border-radius: 10px; 
       background: #fff;
       transition: all 0.2s; 
       flex-shrink: 0;
+      margin-bottom: 8px; /* เพิ่มระยะห่างด้านล่าง เผื่อกรณีปัดบรรทัด */
     }
-    .digit-box:focus { border-color: #0d6efd; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(13, 110, 253, 0.15); outline: none; }
+    
+    .digit-box:focus { 
+      border-color: #0d6efd; 
+      transform: translateY(-3px); 
+      box-shadow: 0 5px 15px rgba(13, 110, 253, 0.15); 
+      outline: none; 
+    }
 
-    /* 6. ส่วนหัวข้อแต่ละ Section */
+    /* สำหรับมือถือ (ปรับให้เล็กและกระชับขึ้น) */
+    @media (max-width: 768px) {
+      .digit-container { gap: 5px; }
+      .digit-box { 
+        width: 35px; 
+        height: 45px; 
+        font-size: 1.1rem; 
+        margin-bottom: 5px;
+      }
+    }
+
+    /* 6. Section Titles */
     .section-title { 
       border-left: none;
       background: linear-gradient(90deg, #e7f1ff, #fff);
@@ -132,49 +164,141 @@
     }
     .section-title i { margin-right: 10px; font-size: 1.3rem; }
 
-    /* 7. Admin Dashboard Styling */
-    .stat-card { 
-      border-radius: 15px; 
-      border: none; 
-      overflow: hidden; 
-      position: relative; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s;
-    }
-    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .bg-gradient-primary { background: linear-gradient(45deg, #4e73df, #224abe); }
-    .bg-gradient-warning { background: linear-gradient(45deg, #f6c23e, #dda20a); }
-    .bg-gradient-success { background: linear-gradient(45deg, #1cc88a, #13855c); }
-    .bg-gradient-danger  { background: linear-gradient(45deg, #e74a3b, #be2617); }
-
     /* อื่นๆ */
     .hidden { display: none !important; }
     .loading-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .req-star { color: #dc3545; margin-left: 3px; }
     
-    /* Responsive */
+    /* CSS สำหรับ Report Section */
+    .stat-item { border-left: 4px solid #0d6efd; transition: 0.2s; }
+    .stat-item:hover { transform: translateX(5px); }
+    .status-pill { font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+    .table-head-fix th { background: #f8f9fa; white-space: nowrap; }
+    .tab-content-area { display: none; }
+    .tab-active { display: block !important; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* --- [เพิ่มใหม่] Responsive Styles สำหรับ Admin และ Mobile --- */
+    
+    @media (max-width: 992px) {
+      /* iPad และจอขนาดกลาง */
+      .main-container { 
+        padding: 30px; 
+        max-width: 95%;
+      }
+    }
+
     @media (max-width: 768px) {
-      .main-container { padding: 25px; margin: 15px; border-radius: 15px; }
+      /* มือถือ */
+      .main-container { 
+        padding: 20px 15px; /* ลด Padding */
+        margin: 15px auto;
+        width: 98%;
+        border-radius: 15px;
+      }
       .digit-box { width: 38px; height: 48px; font-size: 1.2rem; }
       .btn-lg-custom { font-size: 1.1rem; padding: 20px; }
+      
+      /* ปรับส่วนหัว Admin */
+      #admin-dashboard h3 { font-size: 1.5rem; }
+      #admin-dashboard .btn { width: 100%; margin-bottom: 5px; } /* ปุ่มเต็มจอ */
+      #admin-dashboard .d-flex.justify-content-between {
+         flex-direction: column; 
+         align-items: stretch !important;
+         gap: 10px;
+      }
+      
+      /* ปรับตาราง */
+      .table th, .table td { 
+         font-size: 0.9rem; 
+         padding: 0.5rem;
+         white-space: nowrap; /* ให้เลื่อนแนวนอนเอาแทนการบีบ */
+      }
     }
+
+      /* 1. พื้นหลัง: ไล่สีพาสเทลอ่อนๆ (เขียวจางๆ ไป ชมพูจางๆ) ดูสบายตา */
+    body { 
+      background: linear-gradient(135deg, #eafaf1 0%, #fdeef5 100%) !important; 
+    }
+
+    /* 2. แถบสีด้านบนสุดของกล่อง (ไล่สี เขียว -> ชมพู) */
+    .main-container::before {
+      background: linear-gradient(90deg, #198754, #d63384) !important;
+    }
+
+    /* 3. ชื่อโรงเรียน (สีชมพูเข้ม) และคำอธิบาย (สีเทาอมเขียว) */
+    .main-title { 
+      color: #d63384 !important; /* ชมพู */
+      text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+    }
+    .sub-title { color: #5a7063 !important; }
+
+    /* 4. หัวข้อแต่ละส่วน (พื้นหลังชมพูอ่อน ตัวหนังสือสีเขียวเข้ม) */
+    .section-title { 
+      background: linear-gradient(90deg, #fce4ec, #fff) !important;
+      color: #0f5132 !important; /* เขียวแก่ */
+      border-left: 5px solid #d63384 !important; /* ขอบซ้ายชมพู */
+    }
+    .section-title i { color: #d63384 !important; } /* ไอคอนหัวข้อสีชมพู */
+
+    /* 5. ปุ่มกด (Button Theme) */
+    
+    /* เปลี่ยนปุ่มสีฟ้า (btn-primary) เป็น "สีชมพูสด" (ใช้สำหรับห้องเรียนพิเศษ/ปุ่มสำคัญ) */
+    .btn-primary { 
+      background: linear-gradient(45deg, #d63384, #b02a6b) !important; 
+      border: none !important;
+      box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3) !important;
+    }
+    .btn-primary:hover { 
+      background: linear-gradient(45deg, #c2185b, #a01d5a) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(214, 51, 132, 0.4) !important;
+    }
+
+    /* ปรับปุ่มสีเขียว (btn-success) ให้ดูสดชื่นขึ้น (ใช้สำหรับห้องเรียนทั่วไป/ปุ่มยืนยัน) */
+    .btn-success {
+      background: linear-gradient(45deg, #198754, #146c43) !important;
+      box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3) !important;
+    }
+
+    /* 6. กล่องกรอกข้อมูล (Focus แล้วเป็นสีชมพู) */
+    .form-control:focus, .form-select:focus { 
+      border-color: #d63384 !important; 
+      box-shadow: 0 0 0 4px rgba(214, 51, 132, 0.15) !important; 
+    }
+
+    /* 7. กล่องเลขบัตรประชาชน (ตัวเลขสีชมพู ขอบสีเขียวอ่อน) */
+    .digit-box { 
+      color: #d63384 !important; 
+      border: 2px solid #d1e7dd !important;
+    }
+    .digit-box:focus {
+      border-color: #d63384 !important;
+      box-shadow: 0 5px 15px rgba(214, 51, 132, 0.15) !important;
+    }
+
+    /* 8. ไอคอนและตัวเน้นอื่นๆ */
+    .text-primary { color: #d63384 !important; } /* เปลี่ยนข้อความสีฟ้าเป็นชมพู */
+    .spinner-border.text-primary { color: #d63384 !important; } /* ตัวโหลดหมุนๆ เป็นสีชมพู */
+    
+    /* ไอคอนหน้าหลัก */
+    .btn-lg-custom i { color: #fff !important; } /* ไอคอนในปุ่มใหญ่ให้เป็นสีขาว */
+
 </style>
 </head>
 <body>
   <div id="initial-loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease-out;">
-  <div class="text-center">
-    <div class="spinner-border text-primary mb-3" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
-    <h5 class="fw-bold text-secondary animate__animated animate__pulse animate__infinite">กำลังเข้าสู่ระบบ...</h5>
-    <small class="text-muted">กรุณารอสักครู่</small>
+    <div class="text-center">
+      <div class="spinner-border text-primary mb-3" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
+      <h5 class="fw-bold text-secondary animate__animated animate__pulse animate__infinite">กำลังเข้าสู่ระบบ...</h5>
+      <small class="text-muted">กรุณารอสักครู่</small>
+    </div>
   </div>
-</div>
-
 
   <div id="loading" class="loading-overlay hidden">
     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
     <div class="mt-3 fw-bold text-primary">กำลังประมวลผล...</div>
   </div>
-
 
   <div class="container main-container">
     <div class="text-center mb-5" id="main-header">
@@ -182,7 +306,6 @@
       <h3 class="main-title">โรงเรียนอรัญประเทศ</h3>
       <p class="sub-title">ระบบรับสมัครนักเรียนออนไลน์ ประจำปีการศึกษา 2569</p>
     </div>
-
 
     <div id="home-section">
       <div class="row g-3">
@@ -198,7 +321,6 @@
         <div class="col-12 text-center mt-3"><a href="#" onclick="showSection('admin-login-section')" class="text-muted text-decoration-none small"><i class="bi bi-shield-lock"></i> เจ้าหน้าที่</a></div>
       </div>
     </div>
-
 
     <div id="form-section" class="hidden">
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -221,8 +343,25 @@
            <div class="col-md-5"><label class="form-label">นามสกุล <span class="req-star">*</span></label><input type="text" id="lastname" class="form-control text-only" required></div>
            
            <div class="col-md-4"><label class="form-label">วันเกิด <span class="req-star">*</span></label><input type="date" id="dob" class="form-control" required></div>
-           <div class="col-md-4"><label class="form-label">สัญชาติ</label><select id="nationality" class="form-select"><option>ไทย</option><option>กัมพูชา</option><option>อื่นๆ</option></select></div>
-           <div class="col-md-4"><label class="form-label">ศาสนา</label><select id="religion" class="form-select"><option>พุทธ</option><option>อิสลาม</option><option>คริสต์</option><option>อื่นๆ</option></select></div>
+           <div class="col-md-4">
+                <label class="form-label">สัญชาติ</label>
+                   <select id="nationality" class="form-select" onchange="toggleOther('nationality', 'nationality_other')">
+                      <option value="ไทย">ไทย</option>
+                      <option value="กัมพูชา">กัมพูชา</option>
+                      <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
+                     </select>
+                  <input type="text" id="nationality_other" class="form-control mt-2 hidden" placeholder="ระบุสัญชาติ">
+                </div>
+          <div class="col-md-4">
+                <label class="form-label">ศาสนา</label>
+                     <select id="religion" class="form-select" onchange="toggleOther('religion', 'religion_other')">
+                        <option value="พุทธ">พุทธ</option>
+                        <option value="อิสลาม">อิสลาม</option>
+                        <option value="คริสต์">คริสต์</option>
+                        <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
+                      </select>
+                    <input type="text" id="religion_other" class="form-control mt-2 hidden" placeholder="ระบุศาสนา">
+                  </div>
            
            <div class="col-12">
              <label class="form-label">เลขบัตรประชาชน (13 หลัก) <span class="req-star">*</span></label>
@@ -236,7 +375,6 @@
            </div>
         </div>
 
-
         <h5 class="section-title">2. ข้อมูลที่อยู่</h5>
         <div class="row g-3">
            <div class="col-md-3"><label class="form-label">บ้านเลขที่ <span class="req-star">*</span></label><input type="text" id="addrNo" class="form-control" required></div>
@@ -249,52 +387,37 @@
            <div class="col-md-4"><label class="form-label">รหัสไปรษณีย์ <span class="req-star">*</span></label><input type="text" id="zipcode" class="form-control bg-light" readonly></div>
         </div>
 
-
         <h5 class="section-title">3. ข้อมูลครอบครัว</h5>
         <div class="mb-3"><label class="form-label">สถานภาพบิดา-มารดา</label><select id="famStatus" class="form-select"><option>อยู่ด้วยกัน</option><option>หย่าร้าง</option><option>แยกกันอยู่</option><option>บิดาถึงแก่กรรม</option><option>มารดาถึงแก่กรรม</option></select></div>
        
-
        <div class="parent-card">
            <div class="parent-header">ข้อมูลบิดา</div>
            <div class="row g-2">
              <div class="col-3">
-                <label>คำนำหน้า</label>
-                <select id="f_prefix" class="form-select"><option>นาย</option><option>อื่นๆ</option></select>
-             </div>
+              <label>คำนำหน้า</label>
+                 <select id="f_prefix" class="form-select" onchange="toggleOther('f_prefix', 'f_prefix_other')">
+                    <option value="นาย">นาย</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                   </select>
+                 <input type="text" id="f_prefix_other" class="form-control mt-2 hidden" placeholder="ระบุ">
+                </div>
              <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="f_name" class="form-control text-only" required></div>
              <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="f_lname" class="form-control text-only" required></div>
-             
              <div class="col-5"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="f_job" class="form-control" required></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="f_age" class="form-control" placeholder="ปี"></div>
              <div class="col-5"><label>เบอร์โทร <span class="req-star">*</span></label><input type="text" id="f_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" required></div>
-             
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="f_same" onchange="toggleAddr('f')"><label class="form-check-label" for="f_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
-             
              <div class="col-12" id="f_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
-                    <label class="fw-bold mb-2 text-primary">ที่อยู่บิดา (ระบุให้ครบถ้วน)</label>
+                    <label class="fw-bold mb-2 text-primary">ที่อยู่บิดา</label>
                     <div class="row g-2">
                         <div class="col-md-3 col-6"><input type="text" id="f_addr_no" class="form-control" placeholder="บ้านเลขที่"></div>
                         <div class="col-md-3 col-6"><input type="text" id="f_addr_moo" class="form-control" placeholder="หมู่ที่"></div>
                         <div class="col-md-6"><input type="text" id="f_addr_road" class="form-control" placeholder="ถนน/ซอย"></div>
-                        <div class="col-md-4">
-                <select id="f_addr_prov" class="form-select" onchange="chProvP('f')">
-                    <option value="">เลือกจังหวัด</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="f_addr_dist" class="form-select" onchange="chDistP('f')" disabled>
-                    <option value="">เลือกอำเภอ/เขต</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="f_addr_sub" class="form-select" onchange="chSubP('f')" disabled>
-                    <option value="">เลือกตำบล/แขวง</option>
-                </select>
-            </div>
-            <div class="col-md-12">
-                <input type="text" id="f_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly>
-            </div>
+                        <div class="col-md-4"><select id="f_addr_prov" class="form-select" onchange="chProvP('f')"><option value="">เลือกจังหวัด</option></select></div>
+                        <div class="col-md-4"><select id="f_addr_dist" class="form-select" onchange="chDistP('f')" disabled><option value="">เลือกอำเภอ/เขต</option></select></div>
+                        <div class="col-md-4"><select id="f_addr_sub" class="form-select" onchange="chSubP('f')" disabled><option value="">เลือกตำบล/แขวง</option></select></div>
+                        <div class="col-md-12"><input type="text" id="f_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly></div>
                     </div>
                 </div>
              </div>
@@ -304,44 +427,24 @@
         <div class="parent-card">
            <div class="parent-header">ข้อมูลมารดา</div>
            <div class="row g-2">
-             <div class="col-3">
-                <label>คำนำหน้า</label>
-                <select id="m_prefix" class="form-select"><option>นาง</option><option>นางสาว</option></select>
-             </div>
+             <div class="col-3"><label>คำนำหน้า</label><select id="m_prefix" class="form-select"><option>นาง</option><option>นางสาว</option></select></div>
              <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="m_name" class="form-control text-only" required></div>
              <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="m_lname" class="form-control text-only" required></div>
-             
              <div class="col-5"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="m_job" class="form-control" required></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="m_age" class="form-control" placeholder="ปี"></div>
              <div class="col-5"><label>เบอร์โทร <span class="req-star">*</span></label><input type="text" id="m_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" required></div>
-             
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="m_same" onchange="toggleAddr('m')"><label class="form-check-label" for="m_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
-             
              <div class="col-12" id="m_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
-                    <label class="fw-bold mb-2 text-primary">ที่อยู่มารดา (ระบุให้ครบถ้วน)</label>
+                    <label class="fw-bold mb-2 text-primary">ที่อยู่มารดา</label>
                     <div class="row g-2">
                         <div class="col-md-3 col-6"><input type="text" id="m_addr_no" class="form-control" placeholder="บ้านเลขที่"></div>
                         <div class="col-md-3 col-6"><input type="text" id="m_addr_moo" class="form-control" placeholder="หมู่ที่"></div>
                         <div class="col-md-6"><input type="text" id="m_addr_road" class="form-control" placeholder="ถนน/ซอย"></div>
-                        <div class="col-md-4">
-                <select id="m_addr_prov" class="form-select" onchange="chProvP('m')">
-                    <option value="">เลือกจังหวัด</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="m_addr_dist" class="form-select" onchange="chDistP('m')" disabled>
-                    <option value="">เลือกอำเภอ/เขต</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="m_addr_sub" class="form-select" onchange="chSubP('m')" disabled>
-                    <option value="">เลือกตำบล/แขวง</option>
-                </select>
-            </div>
-            <div class="col-md-12">
-                <input type="text" id="m_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly>
-            </div>
+                        <div class="col-md-4"><select id="m_addr_prov" class="form-select" onchange="chProvP('m')"><option value="">เลือกจังหวัด</option></select></div>
+                        <div class="col-md-4"><select id="m_addr_dist" class="form-select" onchange="chDistP('m')" disabled><option value="">เลือกอำเภอ/เขต</option></select></div>
+                        <div class="col-md-4"><select id="m_addr_sub" class="form-select" onchange="chSubP('m')" disabled><option value="">เลือกตำบล/แขวง</option></select></div>
+                        <div class="col-md-12"><input type="text" id="m_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly></div>
                     </div>
                 </div>
              </div>
@@ -351,53 +454,42 @@
         <div class="parent-card">
            <div class="parent-header">ข้อมูลผู้ปกครอง</div>
            <div class="mb-2 bg-light p-2 rounded"><small class="text-muted"><i class="bi bi-info-circle me-1"></i>คัดลอกข้อมูลจาก: <input type="checkbox" id="use_f" onchange="copyP('f')"> บิดา | <input type="checkbox" id="use_m" onchange="copyP('m')"> ใช้ข้อมูลมารดา</small></div>
-           
            <div class="row g-2">
-             <div class="col-3">
-                <label>คำนำหน้า</label>
-                <select id="g_prefix" class="form-select"><option>นาย</option><option>นาง</option><option>นางสาว</option></select>
-             </div>
+             <div class="col-3"><label>คำนำหน้า</label><select id="g_prefix" class="form-select"><option>นาย</option><option>นาง</option><option>นางสาว</option></select></div>
              <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="g_name" class="form-control text-only" required></div>
              <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="g_lname" class="form-control text-only" required></div>
-             
-             <div class="col-3"><label>ความเกี่ยวข้อง <span class="req-star">*</span></label><select id="g_rel" class="form-select" required><option value="">เลือก</option><option>บิดา</option><option>มารดา</option><option>ปู่/ย่า/ตา/ยาย</option><option>พี่/ป้า/น้า/อา</option><option>อื่นๆ</option></select></div>
-             <div class="col-3"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="g_job" class="form-control" required></div>
-             <div class="col-2"><label>อายุ</label><input type="number" id="g_age" class="form-control" placeholder="ปี"></div>
-             <div class="col-4"><label>เบอร์โทร <span class="req-star">*</span></label><input type="text" id="g_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" required></div>
-             
+            <div class="col-3">
+                     <label>เกี่ยวข้อง</label>
+                          <select id="g_rel" class="form-select" required onchange="toggleOther('g_rel', 'g_rel_other')">
+                              <option value="">เลือก</option>
+                              <option value="บิดา">บิดา</option>
+                              <option value="มารดา">มารดา</option>
+                              <option value="ปู่/ย่า/ตา/ยาย">ปู่/ย่า/ตา/ยาย</option>
+                              <option value="พี่/ป้า/น้า/อา">พี่/ป้า/น้า/อา</option>
+                              <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
+                          </select>
+                       <input type="text" id="g_rel_other" class="form-control mt-2 hidden" placeholder="ระบุความเกี่ยวข้อง">
+                  </div>
+             <div class="col-3"><label>อาชีพ</label><input type="text" id="g_job" class="form-control" required></div>
+             <div class="col-2"><label>อายุ</label><input type="number" id="g_age" class="form-control"></div>
+             <div class="col-4"><label>เบอร์โทร</label><input type="text" id="g_phone" class="form-control num-only" maxlength="10" required></div>
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="g_same" onchange="toggleAddr('g')"><label class="form-check-label" for="g_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
-             
              <div class="col-12" id="g_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
-                    <label class="fw-bold mb-2 text-primary">ที่อยู่ผู้ปกครอง (ระบุให้ครบถ้วน)</label>
+                    <label class="fw-bold mb-2 text-primary">ที่อยู่ผู้ปกครอง</label>
                     <div class="row g-2">
-                        <div class="col-md-3 col-6"><input type="text" id="g_addr_no" class="form-control" placeholder="บ้านเลขที่"></div>
+                         <div class="col-md-3 col-6"><input type="text" id="g_addr_no" class="form-control" placeholder="บ้านเลขที่"></div>
                         <div class="col-md-3 col-6"><input type="text" id="g_addr_moo" class="form-control" placeholder="หมู่ที่"></div>
                         <div class="col-md-6"><input type="text" id="g_addr_road" class="form-control" placeholder="ถนน/ซอย"></div>
-                        <div class="col-md-4">
-                <select id="g_addr_prov" class="form-select" onchange="chProvP('g')">
-                    <option value="">เลือกจังหวัด</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="g_addr_dist" class="form-select" onchange="chDistP('g')" disabled>
-                    <option value="">เลือกอำเภอ/เขต</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <select id="g_addr_sub" class="form-select" onchange="chSubP('g')" disabled>
-                    <option value="">เลือกตำบล/แขวง</option>
-                </select>
-            </div>
-            <div class="col-md-12">
-                <input type="text" id="g_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly>
-            </div>
+                        <div class="col-md-4"><select id="g_addr_prov" class="form-select" onchange="chProvP('g')"><option value="">เลือกจังหวัด</option></select></div>
+                        <div class="col-md-4"><select id="g_addr_dist" class="form-select" onchange="chDistP('g')" disabled><option value="">เลือกอำเภอ/เขต</option></select></div>
+                        <div class="col-md-4"><select id="g_addr_sub" class="form-select" onchange="chSubP('g')" disabled><option value="">เลือกตำบล/แขวง</option></select></div>
+                        <div class="col-md-12"><input type="text" id="g_addr_zip" class="form-control bg-white" placeholder="รหัสไปรษณีย์" readonly></div>
                     </div>
                 </div>
              </div>
            </div>
         </div>
-
 
         <h5 class="section-title">4. หลักฐานการสมัคร</h5>
         <div class="mb-3">
@@ -405,11 +497,10 @@
             <input type="file" id="photoFile" class="form-control" accept="image/*" onchange="readF(this,'photo64')">
             <input type="hidden" id="photo64">
             <div id="oldPhoto" class="hidden mt-2"></div>
-
             <div id="newPhotoPreview" class="mt-2 text-center" style="display:none;">
              <small class="text-success d-block mb-1">รูปถ่ายที่จะอัปโหลด:</small>
               <img id="imgPreview" src="" class="img-thumbnail" style="max-height: 180px;">
-        </div>
+            </div>
         </div>
         <div id="ts-box" class="mb-4">
             <label class="form-label">ใบรับรองผลการเรียน (ปพ.1) <span class="req-star">*</span></label>
@@ -417,13 +508,10 @@
             <input type="hidden" id="ts64">
             <div id="oldTs" class="hidden mt-2"></div>
         </div>
-
-
         <hr class="my-4">
         <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 fs-5 rounded-pill shadow">ยืนยันการสมัคร</button>
       </form>
     </div>
-
 
     <div id="status-section" class="hidden text-center">
       <h4 class="mt-3 fw-bold">ตรวจสอบสถานะ</h4>
@@ -435,288 +523,224 @@
       <button class="btn btn-link text-muted mt-3" onclick="softReset()">กลับหน้าหลัก</button>
     </div>
 
-<div id="report-section" class="hidden">
-  
-  <style>
-    /* CSS ตกแต่ง */
-    .stat-item { border-left: 4px solid #0d6efd; transition: 0.2s; }
-    .stat-item:hover { transform: translateX(5px); }
-    .status-pill { font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
-    .table-head-fix th { background: #f8f9fa; white-space: nowrap; }
-    /* ซ่อนเนื้อหาแท็บไว้ก่อน */
-    .tab-content-area { display: none; }
-    /* คลาสสำหรับแท็บที่ถูกเลือก */
-    .tab-active { display: block !important; animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  </style>
+    <div id="report-section" class="hidden">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pt-2">
+        <div class="mb-2 mb-md-0">
+          <h4 class="fw-bold text-dark mb-1"><i class="bi bi-person-lines-fill text-primary me-2"></i>รายชื่อผู้สมัคร</h4>
+          <small class="text-muted">ตรวจสอบสถานะการสมัครเรียน</small>
+        </div>
+        <button class="btn btn-secondary rounded-pill px-4" type="button" onclick="softReset()">
+          <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
+        </button>
+      </div>
+      
+      <div id="stat-loading" class="text-center py-5">
+         <div class="spinner-border text-primary" role="status"></div>
+         <div class="mt-2">กำลังโหลดข้อมูล...</div>
+      </div>
 
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pt-2">
-    <div class="mb-2 mb-md-0">
-      <h4 class="fw-bold text-dark mb-1"><i class="bi bi-person-lines-fill text-primary me-2"></i>รายชื่อผู้สมัคร</h4>
-      <small class="text-muted">ตรวจสอบสถานะการสมัครเรียน</small>
-    </div>
-    <button class="btn btn-secondary rounded-pill px-4" type="button" onclick="softReset()">
-      <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
-    </button>
-  </div>
-
-  <div id="stat-loading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <div class="mt-2">กำลังโหลดข้อมูล...</div>
-  </div>
-
-  <div id="reportContent" class="hidden">
-    
-    <div class="d-flex justify-content-center mb-4 bg-light p-1 rounded-pill border">
-      <button id="btn-m1" class="btn btn-primary rounded-pill w-50 fw-bold" onclick="switchTab('m1')">
-        ม.1 <span id="badge-m1" class="badge bg-white text-primary ms-1 rounded-pill">0</span>
-      </button>
-      <button id="btn-m4" class="btn btn-light text-muted rounded-pill w-50 fw-bold" onclick="switchTab('m4')">
-        ม.4 <span id="badge-m4" class="badge bg-secondary text-white ms-1 rounded-pill">0</span>
-      </button>
-    </div>
-
-    <div id="pane-m1" class="tab-content-area tab-active">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white fw-bold text-primary">ยอดสมัครตามแผนฯ</div>
-            <div class="card-body p-2" id="stat-list-m1"></div>
+      <div id="reportContent" class="hidden">
+        <div class="d-flex justify-content-center mb-4 bg-light p-1 rounded-pill border">
+            <button id="btn-m1" class="btn btn-primary rounded-pill w-50 fw-bold" onclick="switchTab('m1')"> ม.1 <span id="badge-m1" class="badge bg-white text-primary ms-1 rounded-pill">0</span> </button>
+            <button id="btn-m4" class="btn btn-light text-muted rounded-pill w-50 fw-bold" onclick="switchTab('m4')"> ม.4 <span id="badge-m4" class="badge bg-secondary text-white ms-1 rounded-pill">0</span> </button>
+        </div>
+        <div id="pane-m1" class="tab-content-area tab-active">
+          <div class="row g-3">
+             <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                   <div class="card-header bg-white fw-bold text-primary">ยอดสมัครตามแผนฯ</div>
+                   <div class="card-body p-2" id="stat-list-m1"></div>
+                </div>
+             </div>
+             <div class="col-md-8">
+                <div class="card shadow-sm border-0 h-100">
+                   <div class="card-header bg-white">
+                      <div class="row g-2">
+                         <div class="col-7"><input type="text" class="form-control form-control-sm rounded-pill bg-light" id="searchM1" placeholder="ค้นหาชื่อ..." onkeyup="filterTable('m1')"></div>
+                         <div class="col-5"><select class="form-select form-select-sm rounded-pill bg-light" id="filterPlanM1" onchange="filterTable('m1')"></select></div>
+                      </div>
+                   </div>
+                   <div class="table-responsive" style="max-height: 500px;">
+                      <table class="table table-hover align-middle mb-0">
+                         <thead class="table-head-fix sticky-top shadow-sm"><tr><th class="ps-3">ชื่อ-นามสกุล</th><th>แผนการเรียน</th><th class="text-center">สถานะ</th></tr></thead>
+                         <tbody id="list-body-m1"></tbody>
+                      </table>
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white">
-              <div class="row g-2">
-                <div class="col-7">
-                  <input type="text" class="form-control form-control-sm rounded-pill bg-light" id="searchM1" placeholder="ค้นหาชื่อ..." onkeyup="filterTable('m1')">
+        <div id="pane-m4" class="tab-content-area">
+          <div class="row g-3">
+             <div class="col-md-4">
+                <div class="card shadow-sm border-0 h-100">
+                   <div class="card-header bg-white fw-bold text-success">ยอดสมัครตามแผนฯ</div>
+                   <div class="card-body p-2" id="stat-list-m4"></div>
                 </div>
-                <div class="col-5">
-                  <select class="form-select form-select-sm rounded-pill bg-light" id="filterPlanM1" onchange="filterTable('m1')"></select>
+             </div>
+             <div class="col-md-8">
+                <div class="card shadow-sm border-0 h-100">
+                   <div class="card-header bg-white">
+                      <div class="row g-2">
+                         <div class="col-7"><input type="text" class="form-control form-control-sm rounded-pill bg-light" id="searchM4" placeholder="ค้นหาชื่อ..." onkeyup="filterTable('m4')"></div>
+                         <div class="col-5"><select class="form-select form-select-sm rounded-pill bg-light" id="filterPlanM4" onchange="filterTable('m4')"></select></div>
+                      </div>
+                   </div>
+                   <div class="table-responsive" style="max-height: 500px;">
+                      <table class="table table-hover align-middle mb-0">
+                         <thead class="table-head-fix sticky-top shadow-sm"><tr><th class="ps-3">ชื่อ-นามสกุล</th><th>แผนการเรียน</th><th class="text-center">สถานะ</th></tr></thead>
+                         <tbody id="list-body-m4"></tbody>
+                      </table>
+                   </div>
                 </div>
-              </div>
-            </div>
-            <div class="table-responsive" style="max-height: 500px;">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-head-fix sticky-top shadow-sm"><tr><th class="ps-3">ชื่อ-นามสกุล</th><th>แผนการเรียน</th><th class="text-center">สถานะ</th></tr></thead>
-                <tbody id="list-body-m1"></tbody>
-              </table>
-            </div>
+             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div id="pane-m4" class="tab-content-area">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white fw-bold text-success">ยอดสมัครตามแผนฯ</div>
-            <div class="card-body p-2" id="stat-list-m4"></div>
-          </div>
-        </div>
-        <div class="col-md-8">
-          <div class="card shadow-sm border-0 h-100">
-            <div class="card-header bg-white">
-               <div class="row g-2">
-                <div class="col-7">
-                  <input type="text" class="form-control form-control-sm rounded-pill bg-light" id="searchM4" placeholder="ค้นหาชื่อ..." onkeyup="filterTable('m4')">
-                </div>
-                <div class="col-5">
-                  <select class="form-select form-select-sm rounded-pill bg-light" id="filterPlanM4" onchange="filterTable('m4')"></select>
-                </div>
-              </div>
-            </div>
-            <div class="table-responsive" style="max-height: 500px;">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-head-fix sticky-top shadow-sm"><tr><th class="ps-3">ชื่อ-นามสกุล</th><th>แผนการเรียน</th><th class="text-center">สถานะ</th></tr></thead>
-                <tbody id="list-body-m4"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 
     <div id="admin-login-section" class="hidden">
-       <div class="col-md-6 col-lg-5 mx-auto card p-5 shadow border-0 mt-4 text-center">
-         <h4 class="fw-bold mb-4">สำหรับเจ้าหน้าที่</h4>
-         <input type="text" id="aUser" class="form-control mb-3 p-3" placeholder="ชื่อผู้ใช้งาน (Username)">
-         <input type="password" id="aPass" class="form-control mb-3 p-3" placeholder="รหัสผ่าน (Password)">
-         <button class="btn btn-dark w-100 py-3 rounded-pill" onclick="doLogin()">เข้าสู่ระบบ</button>
-         <button class="btn btn-link mt-3 text-muted" onclick="softReset()">กลับหน้าหลัก</button>
-       </div>
+      <div class="col-md-6 col-lg-5 mx-auto card p-5 shadow border-0 mt-4 text-center">
+        <h4 class="fw-bold mb-4">สำหรับเจ้าหน้าที่</h4>
+        <input type="text" id="aUser" class="form-control mb-3 p-3" placeholder="ชื่อผู้ใช้งาน (Username)">
+        <input type="password" id="aPass" class="form-control mb-3 p-3" placeholder="รหัสผ่าน (Password)">
+        <button class="btn btn-dark w-100 py-3 rounded-pill" onclick="doLogin()">เข้าสู่ระบบ</button>
+        <button class="btn btn-link mt-3 text-muted" onclick="softReset()">กลับหน้าหลัก</button>
+      </div>
     </div>
-
 
     <div id="admin-dashboard" class="hidden">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold"><i class="bi bi-speedometer2 text-primary"></i> แดชบอร์ดผู้ดูแลระบบ</h3>
-
-          <div class="d-flex gap-2">
-            <button onclick="exportToExcel()" class="btn btn-success shadow-sm">
-                <i class="bi bi-file-earmark-excel"></i> ส่งออก Excel
-            </button>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+         <h3 class="fw-bold"><i class="bi bi-speedometer2 text-primary"></i> แดชบอร์ดผู้ดูแลระบบ</h3>
+         <div class="d-flex gap-2 btn-action-group">
+            <button onclick="exportToExcel()" class="btn btn-success shadow-sm"><i class="bi bi-file-earmark-excel"></i> ส่งออก Excel</button>
+            <button class="btn btn-outline-danger btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> ออกจากระบบ</button>
+         </div>
+      </div>
+      
+      <div class="d-flex flex-column gap-2 my-3 p-3 bg-light rounded border">
+          <div class="form-check form-switch">
+             <input class="form-check-input" type="checkbox" id="toggleSpecial" onchange="toggleSystem('special', this)" style="cursor: pointer;">
+             <label class="form-check-label fw-bold text-primary" for="toggleSpecial">เปิดรับสมัคร ห้องเรียนพิเศษ</label>
           </div>
-           <div class="d-flex flex-column gap-2 my-3 p-3 bg-light rounded border">
           <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="toggleSpecial"    onchange="toggleSystem('special', this)" style="cursor: pointer;">
-           <label class="form-check-label fw-bold text-primary" for="toggleSpecial">เปิดรับสมัคร ห้องเรียนพิเศษ</label>
-            </div>
-  
-          <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="toggleGeneral" onchange="toggleSystem('general', this)" style="cursor: pointer;">
-         <label class="form-check-label fw-bold text-success" for="toggleGeneral">เปิดรับสมัคร ห้องเรียนทั่วไป</label>
-      </div>
+             <input class="form-check-input" type="checkbox" id="toggleGeneral" onchange="toggleSystem('general', this)" style="cursor: pointer;">
+             <label class="form-check-label fw-bold text-success" for="toggleGeneral">เปิดรับสมัคร ห้องเรียนทั่วไป</label>
+          </div>
       </div>
 
-        <button class="btn btn-outline-danger btn-sm" onclick="logout()">
-    <i class="bi bi-box-arrow-right"></i> ออกจากระบบ
-    </button>
-        
-    </div>
-
-    <div class="row mb-4 g-3">
-        <div class="col-md-6">
+      <div class="row mb-4 g-3">
+         <div class="col-md-6">
             <div class="card shadow-sm h-100">
-                <div class="card-body">
-                <h6 class="text-muted mb-3">จำนวนผู้สมัครแยกตามแผนการเรียน</h6>
-    
-                 <div class="chart-container" style="position: relative; height: 350px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
-                  <canvas id="chartPlan"></canvas>
+               <div class="card-body">
+                  <h6 class="text-muted mb-3">จำนวนผู้สมัครแยกตามแผนการเรียน</h6>
+                  <div class="chart-container" style="position: relative; height: 350px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
+                      <canvas id="chartPlan"></canvas>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+               <div class="card-body">
+                  <h6 class="text-muted mb-3">สถานะการสมัคร</h6>
+                  <canvas id="chartStatus" style="max-height:250px;"></canvas>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+         <div class="card-header bg-white py-3 border-bottom-0">
+             <div class="input-group">
+                 <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                 <input type="text" id="aSearch" class="form-control bg-light border-0" placeholder="ค้นหาชื่อ, เลขบัตร, หรือสถานะ..." onkeyup="filterTbl()">
+             </div>
+         </div>
+         <div class="card border-0 shadow-sm mb-3">
+             <div class="card-body p-2">
+                 <div class="row g-2 align-items-center">
+                     <div class="col-12 col-lg-4">
+                        <div class="input-group">
+                           <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                           <input type="text" id="searchBox" class="form-control border-start-0 ps-0" placeholder="🔍 ค้นหาชื่อ หรือ เลขบัตร..." onkeyup="filterTbl()">
+                        </div>
+                     </div>
+                     <div class="col-6 col-lg-2">
+                        <select id="levelFilter" class="form-select" onchange="filterTbl()">
+                           <option value="all">📚 ทุกระดับชั้น</option>
+                           <option value="ม.1">มัธยมศึกษาปีที่ 1</option>
+                           <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+                        </select>
+                     </div>
+                     <div class="col-6 col-lg-3">
+                        <select id="statusFilter" class="form-select" onchange="filterTbl()">
+                           <option value="all">⚡ สถานะ: ทั้งหมด</option>
+                           <option value="รอตรวจสอบ">⏳ รอตรวจสอบ</option>
+                           <option value="อนุมัติ">✅ อนุมัติแล้ว</option>
+                           <option value="ไม่ผ่าน">❌ ไม่ผ่าน/แก้ไข</option>
+                        </select>
+                     </div>
+                     <div class="col-6 col-lg-2">
+                         <select id="rowsFilter" class="form-select" onchange="filterTbl()">
+                             <option value="20">โชว์ 20 คน</option>
+                             <option value="50">โชว์ 50 คน</option>
+                             <option value="100">โชว์ 100 คน</option>
+                             <option value="all">โชว์ทั้งหมด</option>
+                         </select>
+                     </div>
+                     <div class="col-6 col-lg-1">
+                        <button class="btn btn-light w-100 text-muted border" onclick="resetFilter()"><i class="bi bi-arrow-counterclockwise"></i></button>
+                     </div>
                  </div>
-    
-              </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h6 class="text-muted mb-3">สถานะการสมัคร</h6>
-                    <canvas id="chartStatus" style="max-height:250px;"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
+             </div>
+         </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3 border-bottom-0">
-            <div class="input-group">
-                <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
-                <input type="text" id="aSearch" class="form-control bg-light border-0" 
-                       placeholder="ค้นหาชื่อ, เลขบัตร, หรือสถานะ..." onkeyup="filterTbl()">
-            </div>
-        </div>
-       <div class="card border-0 shadow-sm mb-3">
-    <div class="card-body p-2"> <div class="row g-2 align-items-center">
-            
-            <div class="col-12 col-lg-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" id="searchBox" class="form-control border-start-0 ps-0" placeholder="🔍 ค้นหาชื่อ หรือ เลขบัตร..." onkeyup="filterTbl()">
-                </div>
-            </div>
-
-            <div class="col-6 col-lg-2">
-                <select id="levelFilter" class="form-select" onchange="filterTbl()">
-                    <option value="all">📚 ทุกระดับชั้น</option>
-                    <option value="ม.1">มัธยมศึกษาปีที่ 1</option>
-                    <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
-                </select>
-            </div>
-
-            <div class="col-6 col-lg-3">
-                <select id="statusFilter" class="form-select" onchange="filterTbl()">
-                    <option value="all">⚡ สถานะ: ทั้งหมด</option>
-                    <option value="รอตรวจสอบ">⏳ รอตรวจสอบ</option>
-                    <option value="อนุมัติ">✅ อนุมัติแล้ว</option>
-                    <option value="ไม่ผ่าน">❌ ไม่ผ่าน/แก้ไข</option>
-                </select>
-            </div>
-
-            <div class="col-6 col-lg-2">
-                <select id="rowsFilter" class="form-select" onchange="filterTbl()">
-                    <option value="20">โชว์ 20 คน</option>
-                    <option value="50">โชว์ 50 คน</option>
-                    <option value="100">โชว์ 100 คน</option>
-                    <option value="all">โชว์ทั้งหมด</option>
-                </select>
-            </div>
-
-            <div class="col-6 col-lg-1">
-                <button class="btn btn-light w-100 text-muted border" onclick="resetFilter()">
-                    <i class="bi bi-arrow-counterclockwise"></i>
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
-               
-               
-                <table class="table table-hover align-middle mb-0" id="aTable">
-                    <thead class="table-light sticky-top" style="z-index: 1;">
-                        <tr>
-                            <th style="width: 50%;">ข้อมูลผู้สมัคร</th>
-                            <th style="width: 25%;">สถานะ</th>
-                            <th style="width: 25%;">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-  <div class="modal fade" id="sModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title fw-bold"><i class="bi bi-person-lines-fill me-2"></i>รายละเอียดผู้สมัคร</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4" id="mBody"></div>
-        <div class="modal-footer bg-light">
-          <button class="btn btn-outline-dark me-auto" onclick="window.print()"><i class="bi bi-printer"></i> พิมพ์</button>
-          <div class="d-flex gap-2">
-             <button class="btn btn-warning" onclick="upSt('ให้ปรับปรุงข้อมูล')">แจ้งแก้ไข</button>
-             <button class="btn btn-danger" onclick="upSt('ไม่ผ่านการคัดเลือก')">ปฏิเสธ</button>
-             <button class="btn btn-success px-4" onclick="upSt('อนุมัติ')">อนุมัติ</button>
-          </div>
-        </div>
+         <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="aTable">
+                <thead class="table-light sticky-top" style="z-index: 1;">
+                   <tr>
+                      <th style="min-width: 250px;">ข้อมูลผู้สมัคร</th> <th style="min-width: 120px;">สถานะ</th>
+                      <th style="min-width: 150px;">จัดการ</th>
+                   </tr>
+                </thead>
+                <tbody>
+                   </tbody>
+            </table>
+         </div>
       </div>
     </div>
-  </div>
 
-
-  <div class="modal fade" id="statModal">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title fw-bold"><i class="bi bi-bar-chart-fill me-2"></i>รายงานสถิติการรับสมัคร</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4">
-           <h6 class="fw-bold border-bottom pb-2 mb-3">1. จำนวนผู้สมัครแยกตามแผนการเรียน</h6>
-           <canvas id="chartPlan" class="mb-4" style="max-height: 300px;"></canvas>
-           
-           <h6 class="fw-bold border-bottom pb-2 mb-3 mt-4">2. สัดส่วนสถานะการสมัคร</h6>
-           <div class="row justify-content-center">
-              <div class="col-md-6">
-                 <canvas id="chartStatus" style="max-height: 250px;"></canvas>
-              </div>
+  </div> <div class="modal fade" id="sModal">
+     <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+           <div class="modal-header bg-light">
+               <h5 class="modal-title fw-bold"><i class="bi bi-person-lines-fill me-2"></i>รายละเอียดผู้สมัคร</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+           </div>
+           <div class="modal-body p-4" id="mBody"></div>
+           <div class="modal-footer bg-light">
+               <button class="btn btn-outline-dark me-auto" onclick="window.print()"><i class="bi bi-printer"></i> พิมพ์</button>
+               <div class="d-flex gap-2">
+                   <button class="btn btn-warning" onclick="upSt('ให้ปรับปรุงข้อมูล')">แจ้งแก้ไข</button>
+                   <button class="btn btn-danger" onclick="upSt('ไม่ผ่านการคัดเลือก')">ปฏิเสธ</button>
+                   <button class="btn btn-success px-4" onclick="upSt('อนุมัติ')">อนุมัติ</button>
+               </div>
            </div>
         </div>
-      </div>
-    </div>
+     </div>
+  </div>
+
+  <div class="modal fade" id="statModal">
+     <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+           <div class="modal-header bg-primary text-white">
+               <h5 class="modal-title fw-bold"><i class="bi bi-bar-chart-fill me-2"></i>รายงานสถิติการรับสมัคร</h5>
+               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+           </div>
+           <div class="modal-body"><canvas id="statChartFull"></canvas></div>
+        </div>
+     </div>
   </div>
   <footer class="text-center mt-4 mb-5" style="opacity: 0.8;">
   <p class="mb-0 text-secondary" style="font-size: 0.9rem;">
@@ -1524,8 +1548,8 @@ function validateThaiID(id) {
                 firstname: el('firstname').value,
                 lastname: el('lastname').value,
                 dob: el('dob').value,
-                nationality: el('nationality').value,
-                religion: el('religion').value,
+                nationality: getVal('nationality', 'nationality_other'),
+                religion: getVal('religion', 'religion_other'),
                 idCard: el('idCard').value, // ค่านี้อาจมี G ติดไปถ้าไม่ใช่ SMTE
                 phone: el('phone').value,
                 addrNo: el('addrNo').value,
@@ -1555,7 +1579,13 @@ function validateThaiID(id) {
         }
     });
 }
-
+    function getVal(selectId, inputId) {
+     const val = document.getElementById(selectId).value;
+     if(val === 'อื่นๆ') {
+        return document.getElementById(inputId).value; 
+     }
+     return val;
+    }
 
     function doCheck() {
        const id = el('checkIdCard').value;
@@ -2307,6 +2337,32 @@ function initThaiOnlyInput() {
     });
   });
 }
+
+/* --- ฟังก์ชันสำหรับเปิดช่องกรอก 'อื่นๆ' --- */
+  function toggleOther(selectId, inputId) {
+     const selectObj = document.getElementById(selectId);
+     const inputObj = document.getElementById(inputId);
+     
+     if(selectObj.value === 'อื่นๆ') {
+        inputObj.classList.remove('hidden'); // แสดงช่องกรอก
+        inputObj.required = true;           // บังคับกรอก
+        inputObj.focus();                   // เอาเคอร์เซอร์ไปวางรอ
+     } else {
+        inputObj.classList.add('hidden');    // ซ่อนช่องกรอก
+        inputObj.required = false;          // เลิกบังคับ
+        inputObj.value = '';                // ล้างค่าเดิม
+     }
+  }
+
+  /* --- ฟังก์ชันช่วยดึงค่าข้อมูล (ใช้ตอนกดบันทึก) --- */
+  function getVal(selectId, inputId) {
+     const val = document.getElementById(selectId).value;
+     if(val === 'อื่นๆ') {
+        // ถ้าเลือกอื่นๆ ให้เอาค่าจากช่องที่พิมพ์มาแทน
+        return document.getElementById(inputId).value; 
+     }
+     return val;
+  }
 
 
 
