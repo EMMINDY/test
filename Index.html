@@ -343,25 +343,8 @@
            <div class="col-md-5"><label class="form-label">นามสกุล <span class="req-star">*</span></label><input type="text" id="lastname" class="form-control text-only" required></div>
            
            <div class="col-md-4"><label class="form-label">วันเกิด <span class="req-star">*</span></label><input type="date" id="dob" class="form-control" required></div>
-           <div class="col-md-4">
-                <label class="form-label">สัญชาติ</label>
-                   <select id="nationality" class="form-select" onchange="toggleOther('nationality', 'nationality_other')">
-                      <option value="ไทย">ไทย</option>
-                      <option value="กัมพูชา">กัมพูชา</option>
-                      <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
-                     </select>
-                  <input type="text" id="nationality_other" class="form-control mt-2 hidden" placeholder="ระบุสัญชาติ">
-                </div>
-          <div class="col-md-4">
-                <label class="form-label">ศาสนา</label>
-                     <select id="religion" class="form-select" onchange="toggleOther('religion', 'religion_other')">
-                        <option value="พุทธ">พุทธ</option>
-                        <option value="อิสลาม">อิสลาม</option>
-                        <option value="คริสต์">คริสต์</option>
-                        <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
-                      </select>
-                    <input type="text" id="religion_other" class="form-control mt-2 hidden" placeholder="ระบุศาสนา">
-                  </div>
+           <div class="col-md-4"><label class="form-label">สัญชาติ</label><select id="nationality" class="form-select"><option>ไทย</option><option>กัมพูชา</option><option>อื่นๆ</option></select></div>
+           <div class="col-md-4"><label class="form-label">ศาสนา</label><select id="religion" class="form-select"><option>พุทธ</option><option>อิสลาม</option><option>คริสต์</option><option>อื่นๆ</option></select></div>
            
            <div class="col-12">
              <label class="form-label">เลขบัตรประชาชน (13 หลัก) <span class="req-star">*</span></label>
@@ -393,14 +376,7 @@
        <div class="parent-card">
            <div class="parent-header">ข้อมูลบิดา</div>
            <div class="row g-2">
-             <div class="col-3">
-              <label>คำนำหน้า</label>
-                 <select id="f_prefix" class="form-select" onchange="toggleOther('f_prefix', 'f_prefix_other')">
-                    <option value="นาย">นาย</option>
-                    <option value="อื่นๆ">อื่นๆ</option>
-                   </select>
-                 <input type="text" id="f_prefix_other" class="form-control mt-2 hidden" placeholder="ระบุ">
-                </div>
+             <div class="col-3"><label>คำนำหน้า</label><select id="f_prefix" class="form-select"><option>นาย</option><option>อื่นๆ</option></select></div>
              <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="f_name" class="form-control text-only" required></div>
              <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="f_lname" class="form-control text-only" required></div>
              <div class="col-5"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="f_job" class="form-control" required></div>
@@ -458,18 +434,7 @@
              <div class="col-3"><label>คำนำหน้า</label><select id="g_prefix" class="form-select"><option>นาย</option><option>นาง</option><option>นางสาว</option></select></div>
              <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="g_name" class="form-control text-only" required></div>
              <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="g_lname" class="form-control text-only" required></div>
-            <div class="col-3">
-                     <label>เกี่ยวข้อง</label>
-                          <select id="g_rel" class="form-select" required onchange="toggleOther('g_rel', 'g_rel_other')">
-                              <option value="">เลือก</option>
-                              <option value="บิดา">บิดา</option>
-                              <option value="มารดา">มารดา</option>
-                              <option value="ปู่/ย่า/ตา/ยาย">ปู่/ย่า/ตา/ยาย</option>
-                              <option value="พี่/ป้า/น้า/อา">พี่/ป้า/น้า/อา</option>
-                              <option value="อื่นๆ">อื่นๆ (โปรดระบุ)</option>
-                          </select>
-                       <input type="text" id="g_rel_other" class="form-control mt-2 hidden" placeholder="ระบุความเกี่ยวข้อง">
-                  </div>
+             <div class="col-3"><label>เกี่ยวข้อง</label><select id="g_rel" class="form-select" required><option value="">เลือก</option><option>บิดา</option><option>มารดา</option><option>ปู่/ย่า/ตา/ยาย</option><option>พี่/ป้า/น้า/อา</option><option>อื่นๆ</option></select></div>
              <div class="col-3"><label>อาชีพ</label><input type="text" id="g_job" class="form-control" required></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="g_age" class="form-control"></div>
              <div class="col-4"><label>เบอร์โทร</label><input type="text" id="g_phone" class="form-control num-only" maxlength="10" required></div>
@@ -1548,8 +1513,8 @@ function validateThaiID(id) {
                 firstname: el('firstname').value,
                 lastname: el('lastname').value,
                 dob: el('dob').value,
-                nationality: getVal('nationality', 'nationality_other'),
-                religion: getVal('religion', 'religion_other'),
+                nationality: el('nationality').value,
+                religion: el('religion').value,
                 idCard: el('idCard').value, // ค่านี้อาจมี G ติดไปถ้าไม่ใช่ SMTE
                 phone: el('phone').value,
                 addrNo: el('addrNo').value,
@@ -1579,13 +1544,7 @@ function validateThaiID(id) {
         }
     });
 }
-    function getVal(selectId, inputId) {
-     const val = document.getElementById(selectId).value;
-     if(val === 'อื่นๆ') {
-        return document.getElementById(inputId).value; 
-     }
-     return val;
-    }
+
 
     function doCheck() {
        const id = el('checkIdCard').value;
@@ -2337,32 +2296,6 @@ function initThaiOnlyInput() {
     });
   });
 }
-
-/* --- ฟังก์ชันสำหรับเปิดช่องกรอก 'อื่นๆ' --- */
-  function toggleOther(selectId, inputId) {
-     const selectObj = document.getElementById(selectId);
-     const inputObj = document.getElementById(inputId);
-     
-     if(selectObj.value === 'อื่นๆ') {
-        inputObj.classList.remove('hidden'); // แสดงช่องกรอก
-        inputObj.required = true;           // บังคับกรอก
-        inputObj.focus();                   // เอาเคอร์เซอร์ไปวางรอ
-     } else {
-        inputObj.classList.add('hidden');    // ซ่อนช่องกรอก
-        inputObj.required = false;          // เลิกบังคับ
-        inputObj.value = '';                // ล้างค่าเดิม
-     }
-  }
-
-  /* --- ฟังก์ชันช่วยดึงค่าข้อมูล (ใช้ตอนกดบันทึก) --- */
-  function getVal(selectId, inputId) {
-     const val = document.getElementById(selectId).value;
-     if(val === 'อื่นๆ') {
-        // ถ้าเลือกอื่นๆ ให้เอาค่าจากช่องที่พิมพ์มาแทน
-        return document.getElementById(inputId).value; 
-     }
-     return val;
-  }
 
 
 
