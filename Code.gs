@@ -332,3 +332,15 @@ function getRecruitStatus() {
     general: props.getProperty('STATUS_GENERAL') !== 'false'
   };
 }
+
+// --- เพิ่มฟังก์ชันเช็คเลขบัตรซ้ำ (สำหรับเรียกตรวจสอบทันที) ---
+function checkDuplicateID(idCard) {
+  const sheet = getSheet(CONFIG.SHEET_NAME_DATA);
+  const data = sheet.getDataRange().getValues();
+  
+  // วนลูปเช็ค (สมมติว่าเลขบัตรอยู่คอลัมน์ N หรือ Index 13)
+  // ตัดแถวหัวตารางออก และเช็คเฉพาะคนที่สถานะไม่ใช่ 'ยกเลิก' หรืออื่นๆ ตามต้องการ
+  const isDuplicate = data.slice(1).some(row => String(row[13]).replace(/'/g, '').trim() === String(idCard));
+  
+  return isDuplicate; // ส่งค่า true (ซ้ำ) หรือ false (ไม่ซ้ำ) กลับไป
+}
