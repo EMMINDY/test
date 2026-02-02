@@ -6,7 +6,8 @@ const CONFIG = {
   SHEET_NAME_ADDRESS: 'อ้างอิงที่อยู่',
   SHEET_NAME_ADMIN: 'แอดมิน',
   FOLDER_ID_PHOTO: '1xfbsjSx_o6jwVqG6ypjFoYTwdSoRgvAU',     // ตรวจสอบ ID Folder รูป
-  FOLDER_ID_TRANSCRIPT: '1IUh9NAE64cPGCq0MluT8oqOdD2ntvR9G' // ตรวจสอบ ID Folder ปพ.1
+  FOLDER_ID_TRANSCRIPT: '1IUh9NAE64cPGCq0MluT8oqOdD2ntvR9G', // ตรวจสอบ ID Folder ปพ.1
+  FOLDER_ID_CONDUCT: '1iysw3WTrUr6NH2T3teyf56wpG1-xH_RZ' // ตรวจสอบ ID Folder ปพ.1
 };
 
 
@@ -130,10 +131,14 @@ function submitApplication(fd) {
     // --- [ส่วนที่ 3] จัดการไฟล์แนบ ---
     let photoUrl = rowIndex ? sheet.getRange(rowIndex, 39).getValue() : "-";
     let transUrl = rowIndex ? sheet.getRange(rowIndex, 40).getValue() : "-";
+    let conductUrl = rowIndex ? sheet.getRange(rowIndex, 41).getValue() : "-"; // <<< เพิ่มบรรทัดนี้ (ใบรับรองความประพฤติ อยู่คอลัมน์ 41)
    
     // อัปโหลดไฟล์ใหม่เฉพาะเมื่อมีการเลือกไฟล์เข้ามา
     if(fd.photoFile && fd.photoFile.data) photoUrl = uploadFile(fd.photoFile, CONFIG.FOLDER_ID_PHOTO, appId+"_Photo");
     if(fd.transcriptFile && fd.transcriptFile.data) transUrl = uploadFile(fd.transcriptFile, CONFIG.FOLDER_ID_TRANSCRIPT, appId+"_Transcript");
+    if(fd.conductFile && fd.conductFile.data) { // <<< เพิ่มบล็อกนี้
+      conductUrl = uploadFile(fd.conductFile, CONFIG.FOLDER_ID_CONDUCT, appId+"_Conduct"); 
+    }
 
     // --- [ส่วนที่ 4] เตรียมข้อมูลสำหรับบันทึก ---
     const addr = `${fd.addrNo} หมู่ ${fd.addrMoo} ซอย ${fd.addrSoi} ถนน ${fd.addrRoad} จ.${fd.province} อ.${fd.district} ต.${fd.subdistrict} ${fd.zipcode}`;
@@ -155,7 +160,7 @@ function submitApplication(fd) {
       f.prefix, f.name, f.lname, f.job, f.age, "'"+f.phone, f.addr,
       m.prefix, m.name, m.lname, m.job, m.age, "'"+m.phone, m.addr,
       g.prefix, g.name, g.lname, g.rel, g.job, g.age, "'"+g.phone, g.addr, 
-      photoUrl, transUrl,
+      photoUrl, transUrl, conductUrl,
       rawAddr 
     ];
 
@@ -231,6 +236,7 @@ function getAdminData() {
       
         photo: row[39],      
         transcript: row[40], 
+        conduct: row[41],
         // ----------------------------------------
 
         fullData: row
@@ -255,16 +261,95 @@ function getAdminData() {
 
 
 function updateStudentStatus(ri, st, re, by) {
-   const lock = LockService.getScriptLock();
-   if(lock.tryLock(5000)) {
-     const sheet = getSheet(CONFIG.SHEET_NAME_DATA);
-     sheet.getRange(ri, 4).setValue(st); sheet.getRange(ri, 5).setValue(re + " ("+by+")");
-     lock.releaseLock();
-     return { success: true };
-   }
-   throw new Error("ระบบทำงานหนัก กรุณาลองใหม่");
-}
+  const lock = LockService.getScriptLock();
+  if (lock.tryLock(10000)) {
+    try {
+      // --- [จุดสำคัญ] เรียกใช้ไฟล์จาก ID ใน CONFIG (แก้ปัญหา Error: null) ---
+      const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID); 
+      // -------------------------------------------------------------
 
+      const sheet = ss.getSheetByName(CONFIG.SHEET_NAME_DATA);
+      if (!sheet) throw new Error("ไม่พบแผ่นชีต: " + CONFIG.SHEET_NAME_DATA);
+
+      // 1. บันทึกสถานะลงแผ่นหลัก
+      sheet.getRange(ri, 4).setValue(st); 
+      sheet.getRange(ri, 5).setValue(re + " (" + by + ")");
+      SpreadsheetApp.flush(); // บันทึกทันที
+
+      // 2. ระบบรันเลขที่นั่งสอบ (ทำงานเฉพาะเมื่อกด 'อนุมัติ')
+      if (st === 'อนุมัติ') {
+         const COL_EXAM_ID = 44; // คอลัมน์ AR (เลขที่นั่งสอบ)
+         
+         // ตรวจสอบและสร้างคอลัมน์เพิ่มอัตโนมัติ (ถ้าไม่พอ)
+         if (sheet.getMaxColumns() < COL_EXAM_ID) {
+           sheet.insertColumnsAfter(sheet.getMaxColumns(), COL_EXAM_ID - sheet.getMaxColumns());
+         }
+
+         const rowValues = sheet.getRange(ri, 1, 1, sheet.getLastColumn()).getValues()[0];
+         const currentExamId = (rowValues.length >= COL_EXAM_ID) ? rowValues[COL_EXAM_ID - 1] : "";
+
+         // ถ้ายังไม่มีเลขสอบ ให้สร้างใหม่
+         if (!currentExamId) {
+            // ดึงข้อมูล (Index: 0=Time, 1=AppID, ... 5=Level, 6=Plan)
+            const appId = rowValues[1];
+            const sLevel = String(rowValues[5] || ""); 
+            const sPlan = String(rowValues[6] || "");
+            const sPrefix = rowValues[7] || "";
+            const sName = rowValues[8] || "";
+            const sLname = rowValues[9] || "";
+
+            let codePrefix = "";
+            let targetSheetName = "";
+
+            // ตรวจสอบเงื่อนไข (เพิ่มคำค้นหาภาษาไทยให้แล้ว)
+            if (sLevel.includes("1")) {
+               targetSheetName = "เลขที่นั่งสอบห้องเรียนพิเศษ ม.1";
+               if (sPlan.includes("SMTE") || sPlan.includes("วิทย์") || sPlan.includes("คณิต")) codePrefix = "11";
+               else if (sPlan.includes("IEP") || sPlan.includes("อังกฤษ")) codePrefix = "12";
+            } else if (sLevel.includes("4")) {
+               targetSheetName = "เลขที่นั่งสอบห้องเรียนพิเศษ ม.4";
+               if (sPlan.includes("SMTE") || sPlan.includes("วิทย์") || sPlan.includes("คณิต")) codePrefix = "41";
+               else if (sPlan.includes("IEP") || sPlan.includes("อังกฤษ")) codePrefix = "42";
+            }
+
+            // ถ้าเข้าเงื่อนไข ให้ดำเนินการบันทึก
+            if (codePrefix && targetSheetName) {
+               const targetSheet = ss.getSheetByName(targetSheetName);
+               if (!targetSheet) throw new Error("ไม่พบแผ่นชีตชื่อ: " + targetSheetName);
+
+               // หาเลขลำดับล่าสุด
+               const allExamData = targetSheet.getDataRange().getValues();
+               let maxNum = 0;
+               for (let i = 1; i < allExamData.length; i++) {
+                  let eid = String(allExamData[i][0] || "");
+                  if (eid.startsWith(codePrefix)) {
+                     let num = parseInt(eid.substring(2)) || 0;
+                     if (num > maxNum) maxNum = num;
+                  }
+               }
+               
+               // สร้างเลขใหม่
+               let newId = codePrefix + String(maxNum + 1).padStart(3, '0');
+               
+               // บันทึกลงแผ่นหลัก
+               sheet.getRange(ri, COL_EXAM_ID).setValue(newId);
+               // บันทึกลงแผ่นแยก (ตามระดับชั้น)
+               targetSheet.appendRow([newId, appId, sPrefix, sName, sLname, sPlan]);
+               
+               return { success: true, message: "บันทึกและออกเลขสอบ " + newId + " เรียบร้อย" };
+            }
+         }
+      }
+      return { success: true, message: "บันทึกสถานะเรียบร้อย (ไม่ได้ออกเลขสอบ)" };
+
+    } catch (e) {
+      throw new Error("Error: " + e.message);
+    } finally {
+      lock.releaseLock();
+    }
+  }
+  throw new Error("ระบบทำงานหนัก กรุณาลองใหม่");
+}
 
 function uploadFile(d, fid, fname) {
   try {
