@@ -401,11 +401,11 @@
                    </select>
                  <input type="text" id="f_prefix_other" class="form-control mt-2 hidden" placeholder="ระบุ">
                 </div>
-             <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="f_name" class="form-control text-only" required></div>
-             <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="f_lname" class="form-control text-only" required></div>
-             <div class="col-5"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="f_job" class="form-control" required></div>
+             <div class="col-4"><label>ชื่อ </label><input type="text" id="f_name" class="form-control text-only" ></div>
+             <div class="col-5"><label>นามสกุล </label><input type="text" id="f_lname" class="form-control text-only" ></div>
+             <div class="col-5"><label>อาชีพ </label><input type="text" id="f_job" class="form-control" ></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="f_age" class="form-control" placeholder="ปี"></div>
-             <div class="col-5"><label>เบอร์โทร <span class="req-star">*</span></label><input type="text" id="f_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" required></div>
+             <div class="col-5"><label>เบอร์โทร </label><input type="text" id="f_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" ></div>
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="f_same" onchange="toggleAddr('f')"><label class="form-check-label" for="f_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
              <div class="col-12" id="f_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
@@ -428,11 +428,11 @@
            <div class="parent-header">ข้อมูลมารดา</div>
            <div class="row g-2">
              <div class="col-3"><label>คำนำหน้า</label><select id="m_prefix" class="form-select"><option>นาง</option><option>นางสาว</option></select></div>
-             <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="m_name" class="form-control text-only" required></div>
-             <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="m_lname" class="form-control text-only" required></div>
-             <div class="col-5"><label>อาชีพ <span class="req-star">*</span></label><input type="text" id="m_job" class="form-control" required></div>
+             <div class="col-4"><label>ชื่อ </label><input type="text" id="m_name" class="form-control text-only" ></div>
+             <div class="col-5"><label>นามสกุล </label><input type="text" id="m_lname" class="form-control text-only" ></div>
+             <div class="col-5"><label>อาชีพ </label><input type="text" id="m_job" class="form-control" ></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="m_age" class="form-control" placeholder="ปี"></div>
-             <div class="col-5"><label>เบอร์โทร <span class="req-star">*</span></label><input type="text" id="m_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" required></div>
+             <div class="col-5"><label>เบอร์โทร </label><input type="text" id="m_phone" class="form-control num-only" placeholder="ตัวเลขเท่านั้น" maxlength="10" ></div>
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="m_same" onchange="toggleAddr('m')"><label class="form-check-label" for="m_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
              <div class="col-12" id="m_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
@@ -456,11 +456,11 @@
            <div class="mb-2 bg-light p-2 rounded"><small class="text-muted"><i class="bi bi-info-circle me-1"></i>คัดลอกข้อมูลจาก: <input type="checkbox" id="use_f" onchange="copyP('f')"> บิดา | <input type="checkbox" id="use_m" onchange="copyP('m')"> ใช้ข้อมูลมารดา</small></div>
            <div class="row g-2">
              <div class="col-3"><label>คำนำหน้า</label><select id="g_prefix" class="form-select"><option>นาย</option><option>นาง</option><option>นางสาว</option></select></div>
-             <div class="col-4"><label>ชื่อ <span class="req-star">*</span></label><input type="text" id="g_name" class="form-control text-only" required></div>
-             <div class="col-5"><label>นามสกุล <span class="req-star">*</span></label><input type="text" id="g_lname" class="form-control text-only" required></div>
+             <div class="col-4"><label>ชื่อ </label><input type="text" id="g_name" class="form-control text-only" ></div>
+             <div class="col-5"><label>นามสกุล </label><input type="text" id="g_lname" class="form-control text-only" ></div>
             <div class="col-3">
                      <label>เกี่ยวข้อง</label>
-                          <select id="g_rel" class="form-select" required onchange="toggleOther('g_rel', 'g_rel_other')">
+                          <select id="g_rel" class="form-select"  onchange="toggleOther('g_rel', 'g_rel_other')">
                               <option value="">เลือก</option>
                               <option value="บิดา">บิดา</option>
                               <option value="มารดา">มารดา</option>
@@ -470,9 +470,9 @@
                           </select>
                        <input type="text" id="g_rel_other" class="form-control mt-2 hidden" placeholder="ระบุความเกี่ยวข้อง">
                   </div>
-             <div class="col-3"><label>อาชีพ</label><input type="text" id="g_job" class="form-control" required></div>
+             <div class="col-3"><label>อาชีพ</label><input type="text" id="g_job" class="form-control" ></div>
              <div class="col-2"><label>อายุ</label><input type="number" id="g_age" class="form-control"></div>
-             <div class="col-4"><label>เบอร์โทร</label><input type="text" id="g_phone" class="form-control num-only" maxlength="10" required></div>
+             <div class="col-4"><label>เบอร์โทร</label><input type="text" id="g_phone" class="form-control num-only" maxlength="10" ></div>
              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="g_same" onchange="toggleAddr('g')"><label class="form-check-label" for="g_same">ที่อยู่เดียวกับนักเรียน</label></div></div>
              <div class="col-12" id="g_addr_div" >
                 <div class="card bg-light border-0 p-3 mt-2">
@@ -503,10 +503,16 @@
             </div>
         </div>
         <div id="ts-box" class="mb-4">
-            <label class="form-label">ใบรับรองผลการเรียน (ปพ.1) <span class="req-star">*</span></label>
+            <label class="form-label">ใบรับรองผลการเรียน (ปพ.1) 5 ภาคเรียน  <span class="req-star">*</span></label>
             <input type="file" id="tsFile" class="form-control" accept="image/*,application/pdf" onchange="readF(this,'ts64')">
             <input type="hidden" id="ts64">
             <div id="oldTs" class="hidden mt-2"></div>
+        </div>
+        <div id="conduct-box" class="mb-4">
+            <label class="form-label">ใบรับรองความประพฤติ <span class="req-star">*</span></label>
+            <input type="file" id="conductFile" class="form-control" accept="image/*,application/pdf" onchange="readF(this,'conduct64')">
+            <input type="hidden" id="conduct64">
+         <div id="oldConduct" class="hidden mt-2"></div>
         </div>
         <hr class="my-4">
         <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 fs-5 rounded-pill shadow">ยืนยันการสมัคร</button>
@@ -1463,7 +1469,7 @@ function validateThaiID(id) {
     
     // --- ส่วนที่ 1: ตรวจสอบเงื่อนไขพิเศษสำหรับ SMTE (ห้ามมี G) ---
     const strictPlans = [
-        "SMTE (วิทย์-คณิต-เทคโนโลยี-สิ่งแวดล้อม)",
+       // "SMTE (วิทย์-คณิต-เทคโนโลยี-สิ่งแวดล้อม)",
         "ห้องเรียนพิเศษวิทยาศาสตร์ คณิตศาสตร์ เทคโนโลยีและสิ่งแวดล้อม (SMTE)"
     ];
 
@@ -1579,7 +1585,8 @@ function validateThaiID(id) {
                 mother: getP('m'),
                 guardian: getP('g'),
                 photoFile: JSON.parse(el('photo64').value || '{}'),
-                transcriptFile: el('ts64').value ? JSON.parse(el('ts64').value) : null
+                transcriptFile: el('ts64').value ? JSON.parse(el('ts64').value) : null,
+                conductFile: el('conduct64').value ? JSON.parse(el('conduct64').value) : null
             };
 
             // ส่งข้อมูลไปที่ Google Apps Script
@@ -1870,6 +1877,26 @@ function viewS(rowIndex) {
         }
     }
 
+    // --- ส่วนที่เพิ่มใหม่: ใบรับรองความประพฤติ ---
+    const btnConduct = document.getElementById('vConduct'); // อ้างอิง ID ปุ่มใหม่
+    if(btnConduct) {
+        // เช็คว่ามีลิงก์ไหม (และลิงก์ต้องยาวเกิน 5 ตัวอักษร)
+        if (s.conduct && s.conduct.length > 5) {
+            btnConduct.href = s.conduct;
+            btnConduct.target = "_blank"; // เปิดแท็บใหม่
+            btnConduct.classList.remove('disabled', 'btn-secondary');
+            btnConduct.classList.add('btn-info', 'text-white'); // ใช้ปุ่มสีฟ้า
+            btnConduct.innerHTML = '<i class="bi bi-file-person"></i> เปิดดูใบรับรองความประพฤติ';
+            btnConduct.style.display = 'inline-block'; // แสดงปุ่ม
+        } else {
+            btnConduct.href = '#';
+            btnConduct.classList.add('disabled', 'btn-secondary');
+            btnConduct.classList.remove('btn-info', 'text-white');
+            btnConduct.innerHTML = 'ไม่พบใบรับรองฯ';
+            // btnConduct.style.display = 'none'; // หรือจะซ่อนไปเลยก็ได้ถ้าไม่มีไฟล์
+        }
+    }
+
     new bootstrap.Modal(document.getElementById('studentModal')).show();
 }
 // ฟังก์ชันวาดกราฟ (ใช้ซ้ำได้)
@@ -2017,6 +2044,10 @@ function filterTbl() {
        curIdx=i; const s = allSt.find(x=>x.rowIndex===i);
        let photoSrc = getDirectImg(s.photo);
        
+       let btnConduct = (s.conduct && s.conduct.length > 5) 
+        ? `<a href="${s.conduct}" target="_blank" class="btn btn-sm btn-outline-info mt-1 w-100"><i class="bi bi-file-person"></i> ดูใบรับรองความประพฤติ</a>`
+        : `<button class="btn btn-sm btn-light mt-1 w-100 text-muted" disabled>ไม่มีใบรับรองความประพฤติ</button>`;
+
        let h = `<div class="row">
           <div class="col-md-4 text-center mb-3">
              <div class="card shadow-sm p-2">
@@ -2024,6 +2055,9 @@ function filterTbl() {
                 <div class="mt-2 fw-bold text-primary">${s.appId}</div>
              </div>
              <a href="${s.transcript}" target="_blank" class="btn btn-sm btn-outline-dark mt-2 w-100"><i class="bi bi-file-earmark-text"></i> ดูใบ ปพ.1</a>
+
+             ${btnConduct}
+
           </div>
           <div class="col-md-8">
              <h5 class="fw-bold text-primary border-bottom pb-2">${s.name}</h5>
@@ -2044,16 +2078,53 @@ function filterTbl() {
     }
    
     function upSt(s) {
-       Swal.fire({title:'ระบุเหตุผล/หมายเหตุ', input:'text', inputPlaceholder:'(ถ้ามี)', showCancelButton:true, confirmButtonText:'บันทึก'}).then(r=>{
-         if(r.isConfirmed) {
-            google.script.run.withSuccessHandler(()=>{
-                if(myModal) myModal.hide();
-                loadAdm();
-                Swal.fire('บันทึกสำเร็จ','อัปเดตสถานะเรียบร้อยแล้ว','success');
-            }).updateStudentStatus(curIdx,s,r.value,aName);
-         }
-       });
-    }
+    Swal.fire({
+        title: 'ระบุเหตุผล/หมายเหตุ',
+        input: 'text',
+        inputPlaceholder: '(ถ้ามี)',
+        showCancelButton: true,
+        confirmButtonText: 'บันทึก'
+    }).then(r => {
+        if (r.isConfirmed) {
+            // 1. แสดง Loading ระหว่างรอระบบคำนวณเลข
+            Swal.fire({
+                title: 'กำลังประมวลผล...',
+                text: 'กรุณารอสักครู่ ระบบกำลังบันทึกและตรวจสอบเลขที่นั่งสอบ',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // 2. เรียกฟังก์ชันหลังบ้าน
+            google.script.run
+                .withSuccessHandler((res) => {
+                    // ทำงานเมื่อสำเร็จ
+                    if (myModal) myModal.hide();
+                    loadAdm(); // รีโหลดตาราง
+
+                    // ตรวจสอบข้อความที่ส่งกลับมา
+                    // ถ้ามีข้อความแจ้งเตือน (เช่น ⚠️) ให้แสดงเป็น Warning, ถ้าปกติเป็น Success
+                    let iconType = (res && res.message && res.message.includes('⚠️')) ? 'warning' : 'success';
+                    let msgText = (res && res.message) ? res.message : 'อัปเดตสถานะเรียบร้อยแล้ว';
+
+                    Swal.fire({
+                        title: 'บันทึกสำเร็จ',
+                        text: msgText, // ข้อความนี้จะบอกเลขที่นั่งสอบ
+                        icon: iconType
+                    });
+                })
+                .withFailureHandler((error) => {
+                    // 3. ทำงานเมื่อเกิด Error (จุดสำคัญที่แก้ปัญหาอาการเงียบ)
+                    console.error("Error:", error);
+                    Swal.fire({
+                        title: 'เกิดข้อผิดพลาด!',
+                        html: 'ระบบแจ้งว่า: <span style="color:red">' + error.message + '</span>',
+                        icon: 'error'
+                    });
+                })
+                .updateStudentStatus(curIdx, s, r.value, aName);
+        }
+    });
+}
 
 
     // --- Stats Logic ---
@@ -2398,6 +2469,9 @@ function initThaiOnlyInput() {
                         <div class="d-grid gap-2 mt-2">
                              <a id="vTranscript" href="#" target="_blank" class="btn btn-primary">
                                 <i class="bi bi-file-earmark-pdf"></i> เปิดดูใบ ปพ.1
+                             </a>
+                             <a id="vConduct" href="#" target="_blank" class="btn btn-info text-white">
+                                <i class="bi bi-file-person"></i> เปิดดูใบรับรองความประพฤติ
                              </a>
                         </div>
                     </div>
