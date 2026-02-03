@@ -297,8 +297,19 @@
 
   <div id="loading" class="loading-overlay hidden">
     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
-    <div class="mt-3 fw-bold text-primary">กำลังประมวลผล...</div>
-  </div>
+    
+    <div class="mt-3 fw-bold text-primary">กำลังบันทึกข้อมูล...</div>
+    
+    <div class="progress mt-3" style="width: 60%; height: 25px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <div id="progressBar" 
+             class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+             role="progressbar" 
+             style="width: 0%; font-size: 14px;">
+             0%
+        </div>
+    </div>
+    <small class="text-muted mt-2">กรุณาอย่าปิดหน้าต่างนี้</small>
+</div>
 
   <div class="container main-container">
     <div class="text-center mb-5" id="main-header">
@@ -1518,7 +1529,7 @@ function validateThaiID(id) {
         cancelButtonText: 'แก้ไข'
     }).then(r => {
         if (r.isConfirmed) {
-            loading(1);
+            startSimulatedProgress();
 
             // ฟังก์ชันย่อยสำหรับดึงข้อมูลผู้ปกครอง
             const getP = (p) => {
@@ -1590,12 +1601,22 @@ function validateThaiID(id) {
             };
 
             // ส่งข้อมูลไปที่ Google Apps Script
-            google.script.run
+           google.script.run
                 .withSuccessHandler(res => {
-                    loading(0);
-                    res.success ? Swal.fire('สำเร็จ', res.message, 'success').then(() => softReset()) : alertErr(res.message);
+                    // 2. [แก้ไข] สั่งหยุดนับและโชว์ 100% (แทน loading(0))
+                    stopSimulatedProgress();
+                    
+                    if (res.success) {
+                        Swal.fire('สำเร็จ', res.message, 'success').then(() => softReset());
+                    } else {
+                        Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
+                    }
                 })
-                .withFailureHandler(alertErr)
+                .withFailureHandler(err => {
+                    // 3. [แก้ไข] ถ้า Error ก็ต้องสั่งหยุดเหมือนกัน
+                    stopSimulatedProgress();
+                    Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
+                })
                 .submitApplication(fd);
         }
     });
@@ -2448,6 +2469,47 @@ function initThaiOnlyInput() {
      }
      return val;
   }
+
+  // ตัวแปรสำหรับเก็บ Timer
+let progressInterval;
+
+// ฟังก์ชันเริ่มโหลด: รีเซ็ตค่าและสั่งให้หลอดวิ่ง
+function startSimulatedProgress() {
+    // 1. เปิดหน้า Loading
+    document.getElementById('loading').classList.remove('hidden');
+    
+    const bar = document.getElementById('progressBar');
+    let width = 0;
+    bar.style.width = '0%';
+    bar.innerText = '0%';
+    
+    // 2. เริ่มนับเปอร์เซ็นต์หลอกๆ
+    progressInterval = setInterval(() => {
+        // เพิ่มทีละนิดแบบสุ่ม (1-4%)
+        width += Math.random() * 4; 
+        
+        // ให้หยุดรอที่ 90% (รอจนกว่าเซิร์ฟเวอร์จะตอบกลับ)
+        if (width > 90) width = 90; 
+        
+        bar.style.width = Math.round(width) + '%';
+        bar.innerText = Math.round(width) + '%';
+    }, 500); // ขยับทุกๆ 0.5 วินาที
+}
+
+// ฟังก์ชันหยุดโหลด: ดีดไป 100% แล้วปิดหน้า Loading
+function stopSimulatedProgress() {
+    clearInterval(progressInterval); // หยุดนับ
+    const bar = document.getElementById('progressBar');
+    
+    // ดีดไป 100%
+    bar.style.width = '100%';
+    bar.innerText = '100%';
+    
+    // รอแป๊บนึง (0.5วิ) ให้คนเห็นว่าเต็ม 100 แล้วค่อยปิด
+    setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden');
+    }, 500);
+}
 
 
 
